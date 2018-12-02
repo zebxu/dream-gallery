@@ -1,0 +1,36 @@
+{
+  "name": "vr-react-semantic",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "https://zebxu.github.io/dreamgallery/",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "gh-pages": "^2.0.1",
+    "prop-types": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-player": "^1.7.0",
+    "react-redux": "^5.1.1",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.1.1",
+    "semantic-ui": "^2.4.2",
+    "semantic-ui-react": "^0.83.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "proxy": "http://localhost:5000",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
