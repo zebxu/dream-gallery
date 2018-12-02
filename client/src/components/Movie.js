@@ -154,14 +154,14 @@ class Movie extends React.Component {
               {notFound ? (
                 <span>Movie not found</span>
               ) : embedded_url ? (
-                <Iframe
+                <iframe
+                  src={embedded_url}
                   title="avgle"
                   width="100%"
                   height="500"
                   frameBorder="0"
                   allowFullScreen
-                  referrerpolicy="no-referrer"
-                  url={embedded_url}
+                  referrerpolicy="always"
                 />
               ) : (
                 <Loader />
