@@ -12,6 +12,7 @@ import {
 } from 'semantic-ui-react';
 import Footer from './Footer';
 import axios from 'axios';
+import Iframe from 'react-iframe';
 
 class Movie extends React.Component {
   constructor(props) {
@@ -124,6 +125,12 @@ class Movie extends React.Component {
         });
       }
     };
+    // window.addEventListener('beforeunload', function(e) {
+    //   // Cancel the event as stated by the standard.
+    //   e.preventDefault();
+    //   // Chrome requires returnValue to be set.
+    //   e.returnValue = '';
+    // });
   }
 
   render() {
@@ -147,14 +154,14 @@ class Movie extends React.Component {
               {notFound ? (
                 <span>Movie not found</span>
               ) : embedded_url ? (
-                <iframe
+                <Iframe
                   title="avgle"
                   width="100%"
                   height="500"
                   frameBorder="0"
                   allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={embedded_url}
+                  referrer-policy="same-origin"
+                  url={embedded_url}
                 />
               ) : (
                 <Loader />

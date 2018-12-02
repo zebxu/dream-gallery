@@ -35,6 +35,7 @@ const MovieCard = ({
         loop
         width="100%"
         height="100%"
+        playsinline
       />
     </Link>
 
