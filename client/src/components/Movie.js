@@ -160,7 +160,7 @@ class Movie extends React.Component {
                   height="500"
                   frameBorder="0"
                   allowFullScreen
-                  referrer-policy="same-origin"
+                  referrerpolicy="no-referrer"
                   url={embedded_url}
                 />
               ) : (

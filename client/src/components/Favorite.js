@@ -101,43 +101,40 @@ export default class Favorite extends Component {
             </Grid.Column>
           </Grid>
           <Dropdown
-            text="Filter"
+            text={filter === null ? 'All' : filter === 'VR' ? 'VR' : '中文字幕'}
             floating
             labeled
             className="icon"
             style={{ marginRight: '2rem' }}
           >
             <Dropdown.Menu>
-              <Dropdown.Header icon="filter" content="Category" />
-              <Dropdown.Item active={filter === null}>
-                <NavLink
-                  to={{ search: `&p=${page}` }}
-                  activeStyle={{ color: '#000' }}
-                  name="filter"
-                  value="vr"
-                >
-                  All
-                </NavLink>
+              <Dropdown.Header icon="filter" content="Filter" />
+              <Dropdown.Item
+                active={filter === null}
+                as={NavLink}
+                to={{ search: `&p=${page}` }}
+                name="filter"
+                value="vr"
+              >
+                All
               </Dropdown.Item>
-              <Dropdown.Item active={filter === 'VR'}>
-                <NavLink
-                  to={{ search: `?filter=VR&p=${page}` }}
-                  activeStyle={{ color: '#000' }}
-                  name="filter"
-                  value="vr"
-                >
-                  VR
-                </NavLink>
+              <Dropdown.Item
+                active={filter === 'VR'}
+                as={NavLink}
+                to={{ search: `?filter=VR&p=${page}` }}
+                name="filter"
+                value="vr"
+              >
+                VR
               </Dropdown.Item>
-              <Dropdown.Item active={filter === 'CH'}>
-                <NavLink
-                  to={{ search: `?filter=CH&p=${page}` }}
-                  activeStyle={{ color: '#000' }}
-                  name="filter"
-                  value="ch"
-                >
-                  中文字幕
-                </NavLink>
+              <Dropdown.Item
+                active={filter === 'CH'}
+                as={NavLink}
+                to={{ search: `?filter=CH&p=${page}` }}
+                name="filter"
+                value="ch"
+              >
+                中文字幕
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>

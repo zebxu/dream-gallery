@@ -16,7 +16,7 @@ export default function FavMovie({ video, removeFunc }) {
         <Item.Header as={NavLink} to={`/movie/${video.video_data.vid}`}>
           {video.video_data.title}
         </Item.Header>
-        <Item.Meta>{date.toLocaleDateString('hi-IN')}</Item.Meta>
+        <Item.Meta>{date.toLocaleDateString()}</Item.Meta>
         <Item.Description>{video.video_data.keyword}</Item.Description>
         <Item.Extra>
           {video.video_data.viewnumber.toLocaleString()} views
