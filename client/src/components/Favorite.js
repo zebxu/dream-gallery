@@ -5,7 +5,6 @@ import FavMovie from './FavMovie';
 import axios from 'axios';
 import Navbar from './Navbar';
 import MainPagination from './MainPagination';
-const { API_URL } = require('../config/keys');
 
 export default class Favorite extends Component {
   // constructor(props) {
@@ -35,7 +34,7 @@ export default class Favorite extends Component {
     this.getData();
   }
   removeMovie = saved_id => {
-    axios.delete(`${API_URL}${saved_id}`).then(
+    axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
@@ -53,7 +52,7 @@ export default class Favorite extends Component {
     const { filter } = this.state;
     console.log('Favorite -> getData() ');
     axios
-      .get(`${API_URL}${filter ? filter : ''}`)
+      .get(`/api/movies${filter ? filter : ''}`)
       .then(res => {
         if (res.status === 200) {
           console.log(

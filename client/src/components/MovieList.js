@@ -5,7 +5,6 @@ import { Dropdown, Grid, GridColumn } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-const { API_URL } = require('../config/keys');
 
 class MovieList extends React.Component {
   constructor(props) {
@@ -30,7 +29,7 @@ class MovieList extends React.Component {
 
   getSavedData = () => {
     console.log('MovieList -> getSavedData()');
-    axios.get(API_URL).then(
+    axios.get('api/movies').then(
       res => {
         if (res.status === 200) {
           console.log({ getSavedData: res.data });
@@ -51,7 +50,6 @@ class MovieList extends React.Component {
 
   async componentDidMount() {
     console.log('MovieList -> componentDidMount()');
-    console.log({ API_URL });
     window.addEventListener('scroll', this.saveScrollPos);
     await this.getData();
     await this.updataApiUrl();
@@ -141,7 +139,7 @@ class MovieList extends React.Component {
 
   saveMovie = video => {
     axios
-      .post(API_URL, {
+      .post('/api/movies', {
         video_data: { ...video, category: this.props.mode }
       })
       .then(res => {
@@ -159,7 +157,7 @@ class MovieList extends React.Component {
   };
 
   removeMovie = saved_id => {
-    axios.delete(`${API_URL}${saved_id}`).then(
+    axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {

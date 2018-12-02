@@ -12,7 +12,6 @@ import {
 } from 'semantic-ui-react';
 import Footer from './Footer';
 import axios from 'axios';
-const { API_URL } = require('../config/keys');
 
 class Movie extends React.Component {
   constructor(props) {
@@ -27,7 +26,7 @@ class Movie extends React.Component {
 
   removeMovie = () => {
     const { saved_id } = this.state;
-    axios.delete(`${API_URL}${saved_id}`).then(
+    axios.delete(`/api/movies${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
@@ -46,7 +45,7 @@ class Movie extends React.Component {
     const category = this.state.video.channel === '21' ? 'VR' : 'CH';
     console.log('channel', this.state.video.channel);
     axios
-      .post(API_URL, {
+      .post('/api/movies', {
         video_data: { ...this.state.video, category }
       })
       .then(res => {
@@ -73,7 +72,7 @@ class Movie extends React.Component {
   };
 
   getSavedData = () => {
-    axios.get(API_URL).then(
+    axios.get('api/movies').then(
       res => {
         if (res.status === 200) {
           res.data.videos.forEach((video, index) => {
