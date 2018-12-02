@@ -23,6 +23,8 @@
 - [x] Different favorite list
 - [ ] Dynamic Navbar
 - [ ] Redux refacotr, reduce api calls
+- [ ] Search, no movie is found
+- [ ] 404 not found page route
 
 ### Deployment
 

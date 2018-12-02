@@ -29,7 +29,7 @@ class MovieList extends React.Component {
 
   getSavedData = () => {
     console.log('MovieList -> getSavedData()');
-    axios.get('api/movies').then(
+    axios.get('/api/movies').then(
       res => {
         if (res.status === 200) {
           console.log({ getSavedData: res.data });
@@ -51,8 +51,8 @@ class MovieList extends React.Component {
   async componentDidMount() {
     console.log('MovieList -> componentDidMount()');
     window.addEventListener('scroll', this.saveScrollPos);
-    await this.getData();
     await this.updataApiUrl();
+    await this.getData();
     await this.getSavedData();
   }
 
@@ -73,7 +73,7 @@ class MovieList extends React.Component {
     } else if (this.props.mode === 'SEARCH') {
       this.setState({
         api_url: `https://api.avgle.com/v1/search/${
-          this.props.search_query
+          this.props.match.params.search_query
         }/${page - 1}?o=${order}&t=${time}&limit=${limit}`
       });
     } else if (this.props.mode === 'CH') {
@@ -93,6 +93,7 @@ class MovieList extends React.Component {
         thisProp: this.props.location.search,
         prevProp: prevProps.location.search
       });
+      this.updataApiUrl();
       this.getData();
       this.getSavedData();
     }

@@ -9,7 +9,7 @@ const Landing = ({ mode, match }) => {
     <>
       <Navbar />
       <Container textAlign="center">
-        <MovieList mode={mode} search_query={match.params.search_query} />
+        <MovieList mode={mode} />
       </Container>
       <Divider />
       <Footer />

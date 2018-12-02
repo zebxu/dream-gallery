@@ -52,7 +52,7 @@ export default class Favorite extends Component {
     const { filter } = this.state;
     console.log('Favorite -> getData() ');
     axios
-      .get(`/api/movies${filter ? filter : ''}`)
+      .get(`/api/movies/${filter ? filter : ''}`)
       .then(res => {
         if (res.status === 200) {
           console.log(

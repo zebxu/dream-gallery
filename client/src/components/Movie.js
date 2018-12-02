@@ -26,7 +26,7 @@ class Movie extends React.Component {
 
   removeMovie = () => {
     const { saved_id } = this.state;
-    axios.delete(`/api/movies${saved_id}`).then(
+    axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
@@ -72,7 +72,7 @@ class Movie extends React.Component {
   };
 
   getSavedData = () => {
-    axios.get('api/movies').then(
+    axios.get('/api/movies').then(
       res => {
         if (res.status === 200) {
           res.data.videos.forEach((video, index) => {
