@@ -212,7 +212,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={order === 'mr'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=mr&t=${time}&p=${page}` }}
+                    to={{ search: `?o=mr&t=${time}&p=1` }}
                     name="order"
                     value="mr"
                   >
@@ -221,7 +221,7 @@ class MovieList extends React.Component {
                 </Dropdown.Item>
                 <Dropdown.Item active={order === 'mv'}>
                   <NavLink
-                    to={{ search: `?o=mv&t=${time}&p=${page}` }}
+                    to={{ search: `?o=mv&t=${time}&p=1` }}
                     activeStyle={{ color: '#000' }}
                     name="order"
                     value="mv"
@@ -232,7 +232,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={order === 'bw'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=bw&t=${time}&p=${page}` }}
+                    to={{ search: `?o=bw&t=${time}&p=1` }}
                     name="order"
                     value="bw"
                   >
@@ -242,7 +242,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={order === 'tr'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=tr&t=${time}&p=${page}` }}
+                    to={{ search: `?o=tr&t=${time}&p=1` }}
                   >
                     Top Rated
                   </NavLink>
@@ -250,7 +250,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={order === 'tf'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=tf&t=${time}&p=${page}` }}
+                    to={{ search: `?o=tf&t=${time}&p=1` }}
                   >
                     Top Favorites
                   </NavLink>
@@ -258,7 +258,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={order === 'lg'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=lg&t=${time}&p=${page}` }}
+                    to={{ search: `?o=lg&t=${time}&p=1` }}
                   >
                     Longest
                   </NavLink>
@@ -271,7 +271,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={time === 't'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=${order}&t=t&p=${page}` }}
+                    to={{ search: `?o=${order}&t=t&p=1` }}
                   >
                     1 Day
                   </NavLink>
@@ -279,7 +279,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={time === 'w'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=${order}&t=w&p=${page}` }}
+                    to={{ search: `?o=${order}&t=w&p=1` }}
                   >
                     1 Week
                   </NavLink>
@@ -287,7 +287,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={time === 'm'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=${order}&t=m&p=${page}` }}
+                    to={{ search: `?o=${order}&t=m&p=1` }}
                   >
                     1 Month
                   </NavLink>
@@ -295,7 +295,7 @@ class MovieList extends React.Component {
                 <Dropdown.Item active={time === 'a'}>
                   <NavLink
                     activeStyle={{ color: '#000' }}
-                    to={{ search: `?o=${order}&t=a&p=${page}` }}
+                    to={{ search: `?o=${order}&t=a&p=1` }}
                   >
                     Forever
                   </NavLink>
