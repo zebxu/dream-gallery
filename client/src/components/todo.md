@@ -25,11 +25,12 @@
 - [ ] Redux refacotr, reduce api calls
 - [ ] Search, no movie is found
 - [ ] 404 not found page route
+- [ ] Dynamic search recommendation
 
 ### Deployment
 
-- [ ] Deploy Node server to Heroku as service
-- [ ] Deploy production frontend to Github Page
+- [x] Deploy app to Heroku
+- [ ] ~~Deploy production frontend to Github Page~~
 
 ---
 

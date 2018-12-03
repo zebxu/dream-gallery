@@ -7,13 +7,20 @@ export default function FavMovie({ video, removeFunc }) {
   return (
     <Item>
       <Item.Image
-        as={NavLink}
-        to={`/movie/${video.video_data.vid}`}
+        as="a"
+        href={`https://avgle-viewer.herokuapp.com/movie/${
+          video.video_data.vid
+        }`}
         size="medium"
         src={video.video_data.preview_url}
       />
       <Item.Content>
-        <Item.Header as={NavLink} to={`/movie/${video.video_data.vid}`}>
+        <Item.Header
+          as="a"
+          href={`https://avgle-viewer.herokuapp.com/movie/${
+            video.video_data.vid
+          }`}
+        >
           {video.video_data.title}
         </Item.Header>
         <Item.Meta>{date.toLocaleDateString()}</Item.Meta>
