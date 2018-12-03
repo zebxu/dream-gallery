@@ -1,5 +1,6 @@
 ### Back-End
 
+- [ ] refactor rest api
 - [ ] Authentication
 
 ### Front-End
@@ -30,6 +31,7 @@
 ### Deployment
 
 - [x] Deploy app to Heroku
+- [x] Seperate movie page as a decoupled app
 - [ ] ~~Deploy production frontend to Github Page~~
 
 ---

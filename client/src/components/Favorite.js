@@ -14,11 +14,13 @@ export default class Favorite extends Component {
   //     videos: null
   //   };
   // }
-  state = { videos: null, filter: null };
+  state = { videos: null, filter: 'all' };
 
   getUrlParams = () => {
     const params = new URLSearchParams(window.location.search);
-    this.setState({ filter: params.get('filter') });
+    if (params.get('filter')) {
+      this.setState({ filter: params.get('filter') });
+    }
     this.setState({ page: params.get('p') ? parseInt(params.get('p')) : 1 });
   };
 
@@ -52,7 +54,7 @@ export default class Favorite extends Component {
     const { filter } = this.state;
     console.log('Favorite -> getData() ');
     axios
-      .get(`/api/movies/${filter ? filter : ''}`)
+      .get(`/api/movies/${filter === 'all' ? '' : filter}`)
       .then(res => {
         if (res.status === 200) {
           console.log(

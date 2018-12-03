@@ -8,15 +8,10 @@ router.get('/', (req, res) => {
     .sort({ date: -1 })
     .then(movies => res.json({ count: movies.length, videos: movies }));
 });
-// Get VR videos only
-router.get('/VR', (req, res) => {
-  Movie.find({ 'video_data.category': 'VR' })
-    .sort({ date: -1 })
-    .then(movies => res.json({ count: movies.length, videos: movies }));
-});
-// Get CH videos only
-router.get('/CH', (req, res) => {
-  Movie.find({ 'video_data.category': 'CH' })
+
+// Get filtered videos
+router.get('/:filter', (req, res) => {
+  Movie.find({ 'video_data.category': req.params.filter })
     .sort({ date: -1 })
     .then(movies => res.json({ count: movies.length, videos: movies }));
 });
