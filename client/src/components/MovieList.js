@@ -87,15 +87,16 @@ class MovieList extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
       console.log({
         thisProp: this.props.location.search,
         prevProp: prevProps.location.search
       });
-      this.updataApiUrl();
-      this.getData();
-      this.getSavedData();
+      await this.updataApiUrl();
+      await this.getData();
+      await this.getSavedData();
+      window.scrollTo(0, 0);
     }
   }
 

@@ -27,7 +27,8 @@ export default class Favorite extends Component {
   async componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
       await this.getUrlParams();
-      this.getData();
+      await this.getData();
+      await window.scrollTo(0, 0);
     }
   }
 
