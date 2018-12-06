@@ -104,7 +104,9 @@ export default class Favorite extends Component {
             </Grid.Column>
           </Grid>
           <Dropdown
-            text={filter === null ? 'All' : filter === 'VR' ? 'VR' : '中文字幕'}
+            text={
+              filter === 'all' ? 'All' : filter === 'VR' ? 'VR' : '中文字幕'
+            }
             floating
             labeled
             className="icon"
@@ -113,7 +115,7 @@ export default class Favorite extends Component {
             <Dropdown.Menu>
               <Dropdown.Header icon="filter" content="Filter" />
               <Dropdown.Item
-                active={filter === null}
+                active={filter === 'all'}
                 as={NavLink}
                 to={{ search: `?filter=all&p=${page}` }}
                 name="filter"
