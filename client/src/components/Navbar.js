@@ -22,6 +22,7 @@ class Navbar extends Component {
   showSidebar = () => this.setState({ visible: true });
   hideSidebar = () => this.setState({ visible: false });
   showSearch = () => this.setState({ searchInputVisible: true });
+  hideSearch = () => this.setState({ searchInputVisible: false });
   handleRef = c => {
     this.inputRef = c;
   };
@@ -34,9 +35,12 @@ class Navbar extends Component {
   toSearchPage = async e => {
     console.log('Navbar => toSearchPage()');
     const { search_input } = this.state;
-    await this.props.history.push({
-      pathname: `/search/${search_input}`
-    });
+    if (search_input !== '') {
+      await this.props.history.push({
+        pathname: `/search/${search_input}`
+      });
+      this.hideSearch();
+    }
   };
 
   onChange = (e, { value }) => {
@@ -113,7 +117,7 @@ class Navbar extends Component {
                   as={Transition}
                   visible={searchInputVisible}
                   animation="scale"
-                  duration={500}
+                  duration={50}
                 >
                   <Form onSubmit={this.toSearchPage}>
                     <Input
@@ -133,7 +137,7 @@ class Navbar extends Component {
                   {...Responsive.onlyMobile}
                   as={Transition}
                   visible={!searchInputVisible}
-                  animation="scale"
+                  animation="fade"
                   duration={1000}
                 >
                   <Button icon="search" onClick={this.focus} />

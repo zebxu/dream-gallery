@@ -29,8 +29,8 @@
 - [ ] Dynamic search recommendation
 - [ ] Favorite preview video on hover
 - [ ] ~~Open new tab when click a movie link~~
-- [ ] Movie page favorite button
-- [ ] Zoom out and blur after search input submit
+- [x] Movie page favorite button
+- [x] Zoom out and blur after search input submit
 - [x] Fix search on search result page
 
 ### Deployment
