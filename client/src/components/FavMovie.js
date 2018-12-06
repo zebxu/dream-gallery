@@ -8,6 +8,7 @@ export default function FavMovie({ video, removeFunc }) {
     <Item>
       <Item.Image
         as="a"
+        target="_blank"
         href={`https://avgle-viewer.herokuapp.com/movie/${
           video.video_data.vid
         }`}
@@ -17,6 +18,7 @@ export default function FavMovie({ video, removeFunc }) {
       <Item.Content>
         <Item.Header
           as="a"
+          target="_blank"
           href={`https://avgle-viewer.herokuapp.com/movie/${
             video.video_data.vid
           }`}

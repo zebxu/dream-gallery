@@ -1,6 +1,6 @@
 ### Back-End
 
-- [ ] refactor rest api
+- [x] refactor rest api
 - [ ] Authentication
 
 ### Front-End
@@ -27,6 +27,9 @@
 - [ ] Search, no movie is found
 - [ ] 404 not found page route
 - [ ] Dynamic search recommendation
+- [ ] Favorite preview video on hover
+- [ ] Open new tab when click a movie link
+- [ ] Simplify movie page UI
 
 ### Deployment
 

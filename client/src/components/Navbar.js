@@ -51,7 +51,7 @@ class Navbar extends Component {
           <Menu secondary>
             <Menu.Item header>
               <NavLink to="/" style={{ color: '#2BBBAD' }}>
-                DREAM Gallery
+                MY Avgle
               </NavLink>
             </Menu.Item>
 

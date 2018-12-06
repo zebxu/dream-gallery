@@ -114,7 +114,7 @@ export default class Favorite extends Component {
               <Dropdown.Item
                 active={filter === null}
                 as={NavLink}
-                to={{ search: `&p=${page}` }}
+                to={{ search: `?filter=all&p=${page}` }}
                 name="filter"
                 value="vr"
               >

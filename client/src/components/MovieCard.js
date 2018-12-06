@@ -14,13 +14,17 @@ const MovieCard = ({
   <Card centered fluid>
     <Image
       as="a"
+      target="_blank"
       href={`https://avgle-viewer.herokuapp.com/movie/${video.vid}`}
       src={video.preview_url}
       fluid
       centered
     />
 
-    <a href={`https://avgle-viewer.herokuapp.com/movie/${video.vid}`}>
+    <a
+      href={`https://avgle-viewer.herokuapp.com/movie/${video.vid}`}
+      target="_blank"
+    >
       <ReactPlayer
         url={video.preview_video_url}
         playing
@@ -34,6 +38,7 @@ const MovieCard = ({
     <Card.Content textAlign="left">
       <Card.Header
         as="a"
+        target="_blank"
         href={`https://avgle-viewer.herokuapp.com/movie/${video.vid}`}
         style={{ color: '#000' }}
       >
