@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Item, Container, Grid, Segment, Dropdown } from 'semantic-ui-react';
+import {
+  Item,
+  Container,
+  Grid,
+  Segment,
+  Dropdown,
+  Loader
+} from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import FavMovie from './FavMovie';
 import axios from 'axios';
@@ -51,7 +58,7 @@ export default class Favorite extends Component {
     );
   };
 
-  getData() {
+  getData = () => {
     const { filter } = this.state;
     console.log('Favorite -> getData() ');
     axios
@@ -74,7 +81,7 @@ export default class Favorite extends Component {
       .catch(err => {
         console.error(err);
       });
-  }
+  };
 
   changePage = async (event, data) => {
     const { filter } = this.state;
@@ -145,19 +152,21 @@ export default class Favorite extends Component {
           </Dropdown>
           <Segment raised>
             <Item.Group>
-              {videos
-                ? videos.map((value, key) => {
-                    if (Math.floor(key / 10) === page - 1) {
-                      return (
-                        <FavMovie
-                          video={value}
-                          key={key}
-                          removeFunc={this.removeMovie}
-                        />
-                      );
-                    }
-                  })
-                : null}
+              {videos ? (
+                videos.map((value, key) => {
+                  if (Math.floor(key / 10) === page - 1) {
+                    return (
+                      <FavMovie
+                        video={value}
+                        key={key}
+                        removeFunc={this.removeMovie}
+                      />
+                    );
+                  }
+                })
+              ) : (
+                <Loader />
+              )}
             </Item.Group>
           </Segment>
           <Grid>

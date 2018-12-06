@@ -1,7 +1,14 @@
 import React from 'react';
 import MovieCard from './MovieCard';
 import MainPagination from './MainPagination';
-import { Dropdown, Grid, GridColumn } from 'semantic-ui-react';
+import {
+  Dropdown,
+  Grid,
+  GridColumn,
+  Loader,
+  Icon,
+  Message
+} from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -56,13 +63,27 @@ class MovieList extends React.Component {
     await this.getSavedData();
   }
 
+  async componentDidUpdate(prevProps) {
+    if (this.props.location !== prevProps.location) {
+      console.log({
+        thisProp: this.props.location.search,
+        prevProp: prevProps.location.search
+      });
+      await this.updataApiUrl();
+      await this.getData();
+      await this.getSavedData();
+      window.scrollTo(0, 0);
+      document.body.style.zoom = 1.0;
+    }
+  }
+
   componentWillUnmount() {
     console.log('MovieList -> componentWillUnmount()');
     window.removeEventListener('scroll', this.saveScrollPos);
   }
 
   // Update api endpoint according to this.props.mode given by router
-  updataApiUrl() {
+  updataApiUrl = () => {
     console.log('MovieList -> updateApiUrl()');
     const { order, time, limit, page } = this.state;
     if (this.props.mode === 'VR') {
@@ -85,22 +106,9 @@ class MovieList extends React.Component {
     } else {
       console.error('NO MODE is given to MovieList component');
     }
-  }
+  };
 
-  async componentDidUpdate(prevProps) {
-    if (this.props.location.search !== prevProps.location.search) {
-      console.log({
-        thisProp: this.props.location.search,
-        prevProp: prevProps.location.search
-      });
-      await this.updataApiUrl();
-      await this.getData();
-      await this.getSavedData();
-      window.scrollTo(0, 0);
-    }
-  }
-
-  async getData() {
+  getData = async () => {
     const params = new URLSearchParams(window.location.search);
     await this.setState({
       order: params.get('o') ? params.get('o') : 'mr',
@@ -126,7 +134,7 @@ class MovieList extends React.Component {
       .catch(err => {
         console.error(err);
       });
-  }
+  };
 
   changePage = async (event, data) => {
     console.log('MovieList -> changePage()');
@@ -308,38 +316,47 @@ class MovieList extends React.Component {
           <GridColumn textAlign="center">
             <MainPagination
               activePage={page}
-              totalPages={total_videos ? Math.ceil(total_videos / 10) : 10}
+              totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
               changePage={this.changePage}
             />
           </GridColumn>
         </Grid>
+        {total_videos === 0 ? (
+          <Message color="teal">
+            <Message.Header>
+              <Icon name="search" /> No video is found
+            </Message.Header>
+          </Message>
+        ) : null}
 
-        {videos && savedMoviesList
-          ? videos.map((item, key) => {
-              let saved = false;
-              let saved_id = null;
-              savedMoviesList.forEach((video, index) => {
-                if (video.video_data.vid === item.vid) {
-                  saved = true;
-                  saved_id = video._id;
-                }
-              });
-              return (
-                <MovieCard
-                  video={item}
-                  key={key}
-                  saved={saved}
-                  saved_id={saved_id}
-                  handleClick={this.handleSaveButtonClick}
-                  scrollPos={scrollPos}
-                  lastPath={this.props.location}
-                />
-              );
-            })
-          : null}
+        {videos && savedMoviesList ? (
+          videos.map((item, key) => {
+            let saved = false;
+            let saved_id = null;
+            savedMoviesList.forEach((video, index) => {
+              if (video.video_data.vid === item.vid) {
+                saved = true;
+                saved_id = video._id;
+              }
+            });
+            return (
+              <MovieCard
+                video={item}
+                key={key}
+                saved={saved}
+                saved_id={saved_id}
+                handleClick={this.handleSaveButtonClick}
+                scrollPos={scrollPos}
+                lastPath={this.props.location}
+              />
+            );
+          })
+        ) : (
+          <Loader />
+        )}
         <MainPagination
           activePage={page}
-          totalPages={total_videos ? Math.ceil(total_videos / 10) : 10}
+          totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
           changePage={this.changePage}
         />
       </div>
