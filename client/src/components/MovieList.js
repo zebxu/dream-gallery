@@ -314,11 +314,13 @@ class MovieList extends React.Component {
           </GridColumn>
 
           <GridColumn textAlign="center">
-            <MainPagination
-              activePage={page}
-              totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
-              changePage={this.changePage}
-            />
+            {videos && savedMoviesList ? (
+              <MainPagination
+                activePage={page}
+                totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
+                changePage={this.changePage}
+              />
+            ) : null}
           </GridColumn>
         </Grid>
         {total_videos === 0 ? (
@@ -352,13 +354,15 @@ class MovieList extends React.Component {
             );
           })
         ) : (
-          <Loader />
+          <Loader active />
         )}
-        <MainPagination
-          activePage={page}
-          totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
-          changePage={this.changePage}
-        />
+        {videos && savedMoviesList ? (
+          <MainPagination
+            activePage={page}
+            totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
+            changePage={this.changePage}
+          />
+        ) : null}
       </div>
     );
   }

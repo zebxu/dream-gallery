@@ -13,7 +13,11 @@ import {
 import { NavLink, withRouter } from 'react-router-dom';
 
 class Navbar extends Component {
-  state = { visible: false, searchInputVisible: false, search_input: '' };
+  state = {
+    visible: false,
+    searchInputVisible: false,
+    search_input: ''
+  };
 
   handleItemClick = (e, { name }) => {
     console.log('handleItemClick()');
@@ -40,6 +44,8 @@ class Navbar extends Component {
         pathname: `/search/${search_input}`
       });
       this.hideSearch();
+      this.setState({ search_input: '' });
+      document.activeElement.blur();
     }
   };
 
@@ -48,7 +54,12 @@ class Navbar extends Component {
   };
 
   render() {
-    const { activeItem, visible, searchInputVisible } = this.state;
+    const {
+      activeItem,
+      visible,
+      searchInputVisible,
+      search_input
+    } = this.state;
 
     return (
       <div>
@@ -82,7 +93,7 @@ class Navbar extends Component {
                 active={activeItem === 'ch'}
                 onClick={this.handleItemClick}
               >
-                中文
+                中文字幕
               </Menu.Item>
             </Responsive>
 
@@ -104,7 +115,10 @@ class Navbar extends Component {
               <Responsive minWidth={768} as={Menu.Item}>
                 <Form onSubmit={this.toSearchPage}>
                   <Input
+                    value={search_input}
+                    className="searchInput"
                     icon="search"
+                    ref={this.handleRef}
                     placeholder="Search..."
                     onChange={this.onChange}
                   />
@@ -121,6 +135,7 @@ class Navbar extends Component {
                 >
                   <Form onSubmit={this.toSearchPage}>
                     <Input
+                      value={search_input}
                       placeholder="Search..."
                       size="mini"
                       transparent

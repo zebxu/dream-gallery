@@ -25,12 +25,12 @@
 - [ ] Dynamic Navbar
 - [ ] Redux refacotr, reduce api calls
 - [x] Search, no movie is found
-- [ ] 404 not found page route
+- [x] 404 not found page route
 - [ ] Dynamic search recommendation
 - [ ] Favorite preview video on hover
 - [ ] ~~Open new tab when click a movie link~~
 - [x] Movie page favorite button
-- [x] Zoom out and blur after search input submit
+- [ ] Blur after search input submit
 - [x] Fix search on search result page
 
 ### Deployment
