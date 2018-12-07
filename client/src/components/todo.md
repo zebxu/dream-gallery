@@ -30,7 +30,7 @@
 - [ ] Favorite preview video on hover
 - [ ] ~~Open new tab when click a movie link~~
 - [x] Movie page favorite button
-- [ ] Blur after search input submit
+- [x] Blur after search input submit
 - [x] Fix search on search result page
 
 ### Deployment

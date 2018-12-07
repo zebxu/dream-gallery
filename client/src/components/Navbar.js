@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import DynamicNavbar from './DynamicNavbar';
 import {
   Menu,
   Responsive,
@@ -16,7 +17,8 @@ class Navbar extends Component {
   state = {
     visible: false,
     searchInputVisible: false,
-    search_input: ''
+    search_input: '',
+    dynamicNavbarVisible: false
   };
 
   handleItemClick = (e, { name }) => {
@@ -53,12 +55,31 @@ class Navbar extends Component {
     this.setState({ search_input: value });
   };
 
+  showDynamicNavbar = () => {
+    const scrollPos = document.scrollingElement.scrollTop;
+    if (scrollPos > 100) {
+      this.setState({ dynamicNavbarVisible: true });
+    } else {
+      this.setState({ dynamicNavbarVisible: false });
+    }
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.showDynamicNavbar);
+  }
+
+  componentWillUnmount() {
+    console.log('MovieList -> componentWillUnmount()');
+    window.removeEventListener('scroll', this.showDynamicNavbar);
+  }
+
   render() {
     const {
       activeItem,
       visible,
       searchInputVisible,
-      search_input
+      search_input,
+      dynamicNavbarVisible
     } = this.state;
 
     return (
@@ -153,7 +174,7 @@ class Navbar extends Component {
                   as={Transition}
                   visible={!searchInputVisible}
                   animation="fade"
-                  duration={1000}
+                  duration={{ hide: 1, show: 1000 }}
                 >
                   <Button icon="search" onClick={this.focus} />
                 </Responsive>
@@ -219,6 +240,9 @@ class Navbar extends Component {
           color="black"
           onClick={this.showSidebar}
         />
+        <Responsive minWidth={768}>
+          <DynamicNavbar visible={dynamicNavbarVisible} />
+        </Responsive>
       </div>
     );
   }

@@ -1,16 +1,6 @@
 import React, { Component } from 'react';
-import {
-  Menu,
-  Responsive,
-  Button,
-  Input,
-  Segment,
-  Sidebar,
-  Transition,
-  Icon,
-  Form
-} from 'semantic-ui-react';
-import { NavLink, withRouter } from 'react-router-dom';
+import { Menu, Input, Icon, Form, Transition } from 'semantic-ui-react';
+import { NavLink } from 'react-router-dom';
 
 export default class MenuExampleInvertedSegment extends Component {
   state = { visible: false, searchInputVisible: false, search_input: '' };
@@ -18,61 +8,64 @@ export default class MenuExampleInvertedSegment extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
-    const { activeItem, visible, searchInputVisible } = this.state;
+    const { activeItem } = this.state;
 
     return (
-      <Menu inverted>
+      <Menu
+        inverted
+        fixed="top"
+        style={{
+          visibility: this.props.visible ? 'visible' : 'hidden',
+          transition: '.2s ease-in-out'
+        }}
+      >
         <Menu.Item header>
           <NavLink to="/">MY Avgle</NavLink>
         </Menu.Item>
 
-        <Responsive minWidth={768}>
-          <Menu.Item
-            as={NavLink}
-            to="/vr"
-            name="vr"
-            active={activeItem === 'vr'}
-            onClick={this.handleItemClick}
-          >
-            VR
-          </Menu.Item>
-        </Responsive>
+        <Menu.Item
+          as={NavLink}
+          to="/vr"
+          name="vr"
+          active={activeItem === 'vr'}
+          onClick={this.handleItemClick}
+        >
+          VR
+        </Menu.Item>
 
-        <Responsive minWidth={768}>
-          <Menu.Item
-            as={NavLink}
-            to="/ch"
-            name="ch"
-            active={activeItem === 'ch'}
-            onClick={this.handleItemClick}
-          >
-            中文字幕
-          </Menu.Item>
-        </Responsive>
+        <Menu.Item
+          as={NavLink}
+          to="/ch"
+          name="ch"
+          active={activeItem === 'ch'}
+          onClick={this.handleItemClick}
+        >
+          中文字幕
+        </Menu.Item>
 
         <Menu.Menu position="right">
-          <Responsive minWidth={768}>
-            <Menu.Item
-              as={NavLink}
-              to="/favorite"
-              name="fav"
-              active={activeItem === 'fav'}
-              onClick={this.handleItemClick}
-              position="right"
-            >
-              <Icon name="heart" color="teal" />
-              收藏
-            </Menu.Item>
-          </Responsive>
-          <Responsive minWidth={768} as={Menu.Item}>
+          <Menu.Item
+            as={NavLink}
+            to="/favorite"
+            name="fav"
+            active={activeItem === 'fav'}
+            onClick={this.handleItemClick}
+            position="right"
+          >
+            <Icon name="heart" color="teal" />
+          </Menu.Item>
+
+          <Menu.Item style={{ padding: '.5rem' }}>
             <Form onSubmit={this.toSearchPage} size="mini">
               <Input
+                size="mini"
+                style={{ padding: '0' }}
                 icon="search"
                 placeholder="Search..."
                 onChange={this.onChange}
               />
             </Form>
-          </Responsive>
+          </Menu.Item>
         </Menu.Menu>
       </Menu>
     );
