@@ -24,6 +24,7 @@ class Navbar extends Component {
   handleItemClick = (e, { name }) => {
     console.log('handleItemClick()');
     this.setState({ activeItem: name });
+    this.hideSidebar();
   };
   showSidebar = () => this.setState({ visible: true });
   hideSidebar = () => this.setState({ visible: false });
