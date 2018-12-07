@@ -92,10 +92,11 @@ class MovieList extends React.Component {
           1}?o=${order}&t=${time}&c=21&limit=${limit}`
       });
     } else if (this.props.mode === 'SEARCH') {
+      const query = encodeURIComponent(this.props.match.params.search_query);
+      console.log({ query });
       this.setState({
-        api_url: `https://api.avgle.com/v1/search/${
-          this.props.match.params.search_query
-        }/${page - 1}?o=${order}&t=${time}&limit=${limit}`
+        api_url: `https://api.avgle.com/v1/search/${query}/${page -
+          1}?o=${order}&t=${time}&limit=${limit}`
       });
     } else if (this.props.mode === 'CH') {
       const ch_string = encodeURIComponent('中文字幕');
@@ -207,6 +208,12 @@ class MovieList extends React.Component {
 
     return (
       <div>
+        {this.props.mode === 'SEARCH' ? (
+          <p>
+            Search result of '
+            <strong>{this.props.match.params.search_query}'</strong>
+          </p>
+        ) : null}
         <Grid columns={3} textAlign="left" stackable>
           <GridColumn textAlign="left" verticalAlign="bottom">
             <Dropdown
