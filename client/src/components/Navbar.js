@@ -192,7 +192,7 @@ class Navbar extends Component {
             as={NavLink}
             to="/favorite"
             name="saved"
-            active={activeItem === 'ch'}
+            active={activeItem === 'saved'}
             onClick={this.handleItemClick}
           >
             <Icon name="remove bookmark" color="red" />
