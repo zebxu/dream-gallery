@@ -22,7 +22,7 @@
 - [x] Impove Node api
 - [x] Favorite movie date
 - [x] Different favorite list
-- [ ] Dynamic Navbar
+- [x] Dynamic Navbar
 - [ ] Redux refacotr, reduce api calls
 - [x] Search, no movie is found
 - [x] 404 not found page route
@@ -32,6 +32,7 @@
 - [x] Movie page favorite button
 - [x] Blur after search input submit
 - [x] Fix search on search result page
+- [x] Keyword link to search
 
 ### Deployment
 

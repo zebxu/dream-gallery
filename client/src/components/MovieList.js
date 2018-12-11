@@ -57,7 +57,6 @@ class MovieList extends React.Component {
 
   async componentDidMount() {
     console.log('MovieList -> componentDidMount()');
-    window.addEventListener('scroll', this.saveScrollPos);
     await this.updataApiUrl();
     await this.getData();
     await this.getSavedData();
@@ -75,11 +74,6 @@ class MovieList extends React.Component {
       window.scrollTo(0, 0);
       document.body.style.zoom = 1.0;
     }
-  }
-
-  componentWillUnmount() {
-    console.log('MovieList -> componentWillUnmount()');
-    window.removeEventListener('scroll', this.saveScrollPos);
   }
 
   // Update api endpoint according to this.props.mode given by router
@@ -190,10 +184,10 @@ class MovieList extends React.Component {
     }
   };
 
-  saveScrollPos = () => {
-    // console.log('MovieList -> saveScrollPos()');
-    this.setState({ scrollPos: document.scrollingElement.scrollTop });
-  };
+  // saveScrollPos = () => {
+  //   // console.log('MovieList -> saveScrollPos()');
+  //   this.setState({ scrollPos: document.scrollingElement.scrollTop });
+  // };
 
   render() {
     const {

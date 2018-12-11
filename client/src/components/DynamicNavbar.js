@@ -29,12 +29,9 @@ export default class MenuExampleInvertedSegment extends Component {
         inverted
         fixed="top"
         style={{
-          transform:
-            scrollPos > 150
-              ? scrollPos - 150 > 50
-                ? `translateY(0px)`
-                : `translateY(${-50 + (scrollPos - 150)}px)`
-              : 'translateY(-50px)'
+          transform: `translateY(${
+            scrollPos > 150 ? Math.min(-50 + (scrollPos - 150), 0) : -50
+          }px)`
         }}
       >
         <Menu.Item header>
