@@ -1,5 +1,6 @@
 import React from 'react';
 import { Item, Button } from 'semantic-ui-react';
+import { NavLink } from 'react-router-dom';
 
 export default function FavMovie({ video, removeFunc }) {
   const date = new Date(video.date);
@@ -23,7 +24,15 @@ export default function FavMovie({ video, removeFunc }) {
           {video.video_data.title}
         </Item.Header>
         <Item.Meta>{date.toLocaleDateString()}</Item.Meta>
-        <Item.Description>{video.video_data.keyword}</Item.Description>
+        <Item.Description>
+          {video.video_data.keyword.split(' ').map((keyword, key) => {
+            return (
+              <NavLink key={key} to={`/search/${keyword}`}>
+                {keyword}{' '}
+              </NavLink>
+            );
+          })}
+        </Item.Description>
         <Item.Extra>
           {video.video_data.viewnumber.toLocaleString()} views
         </Item.Extra>

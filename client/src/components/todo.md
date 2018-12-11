@@ -23,16 +23,17 @@
 - [x] Favorite movie date
 - [x] Different favorite list
 - [x] Dynamic Navbar
-- [ ] Redux refacotr, reduce api calls
 - [x] Search, no movie is found
 - [x] 404 not found page route
-- [ ] Dynamic search recommendation
-- [ ] Favorite preview video on hover
 - [ ] ~~Open new tab when click a movie link~~
 - [x] Movie page favorite button
 - [x] Blur after search input submit
 - [x] Fix search on search result page
 - [x] Keyword link to search
+- [ ] Dynamic search recommendation
+- [ ] Favorite preview video on hover
+- [ ] Redux refacotr, reduce api calls, caching
+- [ ] Render movie page using template engine and Node.js
 
 ### Deployment
 
