@@ -9,7 +9,10 @@ import {
   Sidebar,
   Transition,
   Icon,
-  Form
+  Form,
+  Placeholder,
+  Card,
+  Container
 } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 
@@ -85,8 +88,15 @@ class Navbar extends Component {
 
     return (
       <div>
-        <Segment>
-          <Menu secondary>
+        <Segment
+          style={{
+            position: 'fixed',
+            top: 0,
+            width: '100%',
+            height: dynamicNavbarVisible ? '5%' : '10%'
+          }}
+        >
+          <Menu secondary fixed="top">
             <Menu.Item header>
               <NavLink to="/" style={{ color: '#2BBBAD' }}>
                 MY Avgle
@@ -241,13 +251,26 @@ class Navbar extends Component {
           color="black"
           onClick={this.showSidebar}
         />
-        <Responsive minWidth={768}>
+        {/* <Responsive minWidth={768}>
           <DynamicNavbar
             visible={dynamicNavbarVisible}
             toSearchPage={this.toSearchPage}
             onChange={this.onChange}
           />
-        </Responsive>
+        </Responsive> */}
+        <Container>
+          <Card.Group itemsPerRow={3}>
+            {[...Array(10).keys()].map(key => (
+              <Card key={key}>
+                <Card.Content>
+                  <Placeholder>
+                    <Placeholder.Image square />
+                  </Placeholder>
+                </Card.Content>
+              </Card>
+            ))}
+          </Card.Group>
+        </Container>
       </div>
     );
   }

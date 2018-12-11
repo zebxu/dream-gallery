@@ -44,7 +44,13 @@ const MovieCard = ({
         <Icon name="play circle outline" />
       </Card.Meta>
       <Card.Description>
-        {video.keyword}
+        {video.keyword.split(' ').map((keyword, key) => {
+          return (
+            <NavLink key={key} to={`/search/${keyword}`}>
+              {keyword}{' '}
+            </NavLink>
+          );
+        })}
         <Button
           icon="remove bookmark"
           floated="right"

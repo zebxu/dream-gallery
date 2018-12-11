@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Input, Icon, Form, Transition } from 'semantic-ui-react';
+import { Menu, Input, Icon, Form } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
 export default class MenuExampleInvertedSegment extends Component {
@@ -16,7 +16,7 @@ export default class MenuExampleInvertedSegment extends Component {
         fixed="top"
         style={{
           visibility: this.props.visible ? 'visible' : 'hidden',
-          transition: '.2s ease-in-out'
+          transition: '0s ease-in-out'
         }}
       >
         <Menu.Item header>
@@ -56,13 +56,13 @@ export default class MenuExampleInvertedSegment extends Component {
           </Menu.Item>
 
           <Menu.Item style={{ padding: '.5rem' }}>
-            <Form onSubmit={this.toSearchPage} size="mini">
+            <Form onSubmit={this.props.toSearchPage} size="mini">
               <Input
                 size="mini"
                 style={{ padding: '0' }}
                 icon="search"
                 placeholder="Search..."
-                onChange={this.onChange}
+                onChange={this.props.onChange}
               />
             </Form>
           </Menu.Item>

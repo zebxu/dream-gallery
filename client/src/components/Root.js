@@ -4,7 +4,7 @@ import { Route, Switch } from 'react-router-dom';
 import React from 'react';
 import Favorite from './Favorite';
 import NotFound from './NotFound';
-import DynamicNavbar from './DynamicNavbar';
+import TestNavbar from './TestNavbar';
 
 const Root = () => {
   return (
@@ -23,7 +23,7 @@ const Root = () => {
         />
         <Route path="/vr" render={props => <Landing {...props} mode="VR" />} />
         <Route path="/movie/:vid" exact component={Movie} />
-        <Route path="/test" component={DynamicNavbar} />
+        <Route path="/test" component={TestNavbar} />
         <Route component={NotFound} />
       </Switch>
     </React.Fragment>
