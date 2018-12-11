@@ -7,8 +7,22 @@ export default class MenuExampleInvertedSegment extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+  showDynamicNavbar = () => {
+    const scrollPos = document.scrollingElement.scrollTop;
+    this.setState({ scrollPos: scrollPos });
+  };
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.showDynamicNavbar);
+  }
+
+  componentWillUnmount() {
+    console.log('DynamicNavbar -> componentWillUnmount()');
+    window.removeEventListener('scroll', this.showDynamicNavbar);
+  }
+
   render() {
-    const { activeItem } = this.state;
+    const { activeItem, scrollPos } = this.state;
 
     return (
       <Menu
@@ -16,12 +30,11 @@ export default class MenuExampleInvertedSegment extends Component {
         fixed="top"
         style={{
           transform:
-            this.props.scrollPos > 150
-              ? this.props.scrollPos - 150 > 50
+            scrollPos > 150
+              ? scrollPos - 150 > 50
                 ? `translateY(0px)`
-                : `translateY(${-50 + (this.props.scrollPos - 150)}px)`
-              : 'translateY(-50px)',
-          transition: 'all .05s linear'
+                : `translateY(${-50 + (scrollPos - 150)}px)`
+              : 'translateY(-50px)'
         }}
       >
         <Menu.Item header>

@@ -17,8 +17,7 @@ class Navbar extends Component {
   state = {
     visible: false,
     searchInputVisible: false,
-    search_input: '',
-    dynamicNavbarVisible: false
+    search_input: ''
   };
 
   handleItemClick = (e, { name }) => {
@@ -56,32 +55,12 @@ class Navbar extends Component {
     this.setState({ search_input: value });
   };
 
-  showDynamicNavbar = () => {
-    const scrollPos = document.scrollingElement.scrollTop;
-    if (scrollPos > 150) {
-      this.setState({ dynamicNavbarVisible: true, scrollPos: scrollPos });
-    } else {
-      this.setState({ dynamicNavbarVisible: false, scrollPos: scrollPos });
-    }
-  };
-
-  componentDidMount() {
-    window.addEventListener('scroll', this.showDynamicNavbar);
-  }
-
-  componentWillUnmount() {
-    console.log('MovieList -> componentWillUnmount()');
-    window.removeEventListener('scroll', this.showDynamicNavbar);
-  }
-
   render() {
     const {
       activeItem,
       visible,
       searchInputVisible,
-      search_input,
-      dynamicNavbarVisible,
-      scrollPos
+      search_input
     } = this.state;
 
     return (
@@ -244,10 +223,8 @@ class Navbar extends Component {
         />
         <Responsive minWidth={768}>
           <DynamicNavbar
-            visible={dynamicNavbarVisible}
             toSearchPage={this.toSearchPage}
             onChange={this.onChange}
-            scrollPos={scrollPos}
           />
         </Responsive>
       </div>
