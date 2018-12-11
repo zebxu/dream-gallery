@@ -15,8 +15,13 @@ export default class MenuExampleInvertedSegment extends Component {
         inverted
         fixed="top"
         style={{
-          visibility: this.props.visible ? 'visible' : 'hidden',
-          transition: '0s ease-in-out'
+          transform:
+            this.props.scrollPos > 150
+              ? this.props.scrollPos - 150 > 50
+                ? `translateY(0px)`
+                : `translateY(${-50 + (this.props.scrollPos - 150)}px)`
+              : 'translateY(-50px)',
+          transition: 'all .05s linear'
         }}
       >
         <Menu.Item header>

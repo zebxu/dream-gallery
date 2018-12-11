@@ -59,9 +59,9 @@ class Navbar extends Component {
   showDynamicNavbar = () => {
     const scrollPos = document.scrollingElement.scrollTop;
     if (scrollPos > 150) {
-      this.setState({ dynamicNavbarVisible: true });
+      this.setState({ dynamicNavbarVisible: true, scrollPos: scrollPos });
     } else {
-      this.setState({ dynamicNavbarVisible: false });
+      this.setState({ dynamicNavbarVisible: false, scrollPos: scrollPos });
     }
   };
 
@@ -80,7 +80,8 @@ class Navbar extends Component {
       visible,
       searchInputVisible,
       search_input,
-      dynamicNavbarVisible
+      dynamicNavbarVisible,
+      scrollPos
     } = this.state;
 
     return (
@@ -246,6 +247,7 @@ class Navbar extends Component {
             visible={dynamicNavbarVisible}
             toSearchPage={this.toSearchPage}
             onChange={this.onChange}
+            scrollPos={scrollPos}
           />
         </Responsive>
       </div>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Item, Button } from 'semantic-ui-react';
-import { NavLink } from 'react-router-dom';
 
 export default function FavMovie({ video, removeFunc }) {
   const date = new Date(video.date);

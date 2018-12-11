@@ -12,7 +12,6 @@ import {
 } from 'semantic-ui-react';
 import Footer from './Footer';
 import axios from 'axios';
-import Iframe from 'react-iframe';
 
 class Movie extends React.Component {
   constructor(props) {

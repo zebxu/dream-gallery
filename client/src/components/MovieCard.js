@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Icon, Image, Button } from 'semantic-ui-react';
-import { Link, NavLink, withRouter } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 
 const MovieCard = ({
