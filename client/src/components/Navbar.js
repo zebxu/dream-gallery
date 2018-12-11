@@ -99,6 +99,19 @@ class Navbar extends Component {
               </Menu.Item>
             </Responsive>
 
+            <Responsive minWidth={768}>
+              <Menu.Item
+                as={NavLink}
+                to="/all"
+                style={{ color: '#000', marginTop: '1rem' }}
+                name="all"
+                active={activeItem === 'all'}
+                onClick={this.handleItemClick}
+              >
+                All
+              </Menu.Item>
+            </Responsive>
+
             <Menu.Menu position="right">
               <Responsive minWidth={768}>
                 <Menu.Item
@@ -203,6 +216,16 @@ class Navbar extends Component {
             onClick={this.handleItemClick}
           >
             中文
+          </Menu.Item>
+
+          <Menu.Item
+            as={NavLink}
+            to="/all"
+            name="all"
+            active={activeItem === 'all'}
+            onClick={this.handleItemClick}
+          >
+            All
           </Menu.Item>
 
           <Menu.Item onClick={this.hideSidebar}>&#10005;</Menu.Item>

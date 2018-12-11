@@ -21,6 +21,10 @@ const Root = () => {
           render={props => <Landing {...props} mode="SEARCH" />}
         />
         <Route path="/vr" render={props => <Landing {...props} mode="VR" />} />
+        <Route
+          path="/all"
+          render={props => <Landing {...props} mode="ALL" />}
+        />
         <Route path="/movie/:vid" exact component={Movie} />
         <Route component={NotFound} />
       </Switch>

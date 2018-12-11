@@ -98,6 +98,11 @@ class MovieList extends React.Component {
         api_url: `https://api.avgle.com/v1/search/${ch_string}/${page -
           1}?o=${order}&t=${time}&limit=${limit}`
       });
+    } else if (this.props.mode === 'ALL') {
+      this.setState({
+        api_url: `https://api.avgle.com/v1/videos/${page -
+          1}?o=${order}&t=${time}&limit=${limit}`
+      });
     } else {
       console.error('NO MODE is given to MovieList component');
     }
