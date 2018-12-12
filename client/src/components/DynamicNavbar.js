@@ -58,6 +58,16 @@ export default class MenuExampleInvertedSegment extends Component {
           中文字幕
         </Menu.Item>
 
+        <Menu.Item
+          as={NavLink}
+          to="/all"
+          name="all"
+          active={activeItem === 'all'}
+          onClick={this.handleItemClick}
+        >
+          All
+        </Menu.Item>
+
         <Menu.Menu position="right">
           <Menu.Item
             as={NavLink}

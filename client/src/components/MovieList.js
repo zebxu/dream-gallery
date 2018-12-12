@@ -18,7 +18,7 @@ class MovieList extends React.Component {
     super(props);
     console.log('MovieList -> constructor');
     this.state = {
-      order: 'mr',
+      order: 'tr',
       time: 'a',
       limit: 10,
       page: 1
@@ -111,7 +111,7 @@ class MovieList extends React.Component {
   getData = async () => {
     const params = new URLSearchParams(window.location.search);
     await this.setState({
-      order: params.get('o') ? params.get('o') : 'mr',
+      order: params.get('o') ? params.get('o') : 'tr',
       time: params.get('t') ? params.get('t') : 'a',
       page: params.get('p') ? parseInt(params.get('p')) : 1
     });
