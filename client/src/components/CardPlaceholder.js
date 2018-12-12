@@ -6,9 +6,6 @@ const CardPlaceholder = () => (
     <Placeholder fluid>
       <Placeholder.Image rectangular />
     </Placeholder>
-    <Placeholder fluid>
-      <Placeholder.Image rectangular />
-    </Placeholder>
     <Card.Content textAlign="left">
       <Card.Header>
         <Placeholder>

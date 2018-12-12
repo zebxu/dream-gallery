@@ -348,31 +348,29 @@ class MovieList extends React.Component {
           </Message>
         ) : null}
 
-        {fetchingMovieData || fetchingSavedData ? (
-          <CardPlaceholder />
-        ) : (
-          videos.map((item, key) => {
-            let saved = false;
-            let saved_id = null;
-            savedMoviesList.forEach((video, index) => {
-              if (video.video_data.vid === item.vid) {
-                saved = true;
-                saved_id = video._id;
-              }
-            });
-            return (
-              <MovieCard
-                video={item}
-                key={key}
-                saved={saved}
-                saved_id={saved_id}
-                handleClick={this.handleSaveButtonClick}
-                scrollPos={scrollPos}
-                lastPath={this.props.location}
-              />
-            );
-          })
-        )}
+        {fetchingMovieData || fetchingSavedData
+          ? [...Array(10)].map(() => <CardPlaceholder />)
+          : videos.map((item, key) => {
+              let saved = false;
+              let saved_id = null;
+              savedMoviesList.forEach((video, index) => {
+                if (video.video_data.vid === item.vid) {
+                  saved = true;
+                  saved_id = video._id;
+                }
+              });
+              return (
+                <MovieCard
+                  video={item}
+                  key={key}
+                  saved={saved}
+                  saved_id={saved_id}
+                  handleClick={this.handleSaveButtonClick}
+                  scrollPos={scrollPos}
+                  lastPath={this.props.location}
+                />
+              );
+            })}
 
         {fetchingMovieData ? null : (
           <MainPagination
