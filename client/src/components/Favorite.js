@@ -21,7 +21,7 @@ export default class Favorite extends Component {
   //     videos: null
   //   };
   // }
-  state = { videos: null, filter: 'all' };
+  state = { videos: null, filter: 'all', fetchingData: true };
 
   getUrlParams = () => {
     const params = new URLSearchParams(window.location.search);
@@ -60,6 +60,7 @@ export default class Favorite extends Component {
 
   getData = () => {
     const { filter } = this.state;
+    this.setState({ fetchingData: true });
     console.log('Favorite -> getData() ');
     axios
       .get(`/api/movies/${filter === 'all' ? '' : filter}`)
@@ -80,6 +81,9 @@ export default class Favorite extends Component {
       })
       .catch(err => {
         console.error(err);
+      })
+      .then(() => {
+        this.setState({ fetchingData: false });
       });
   };
 
@@ -94,20 +98,20 @@ export default class Favorite extends Component {
   };
 
   render() {
-    const { videos, total_videos, page, filter } = this.state;
+    const { videos, total_videos, page, filter, fetchingData } = this.state;
     return (
       <>
         <Navbar />
         <Container>
           <Grid>
             <Grid.Column textAlign="center">
-              {total_videos ? (
+              {fetchingData ? null : (
                 <MainPagination
                   activePage={page}
                   totalPages={total_videos ? Math.ceil(total_videos / 10) : 10}
                   changePage={this.changePage}
                 />
-              ) : null}
+              )}
             </Grid.Column>
           </Grid>
           <Dropdown
@@ -152,7 +156,13 @@ export default class Favorite extends Component {
           </Dropdown>
           <Segment raised>
             <Item.Group>
-              {videos ? (
+              {fetchingData ? (
+                <>
+                  <br />
+                  <Loader active />
+                  <br />
+                </>
+              ) : (
                 videos.map((value, key) => {
                   if (Math.floor(key / 10) === page - 1) {
                     return (
@@ -164,8 +174,6 @@ export default class Favorite extends Component {
                     );
                   }
                 })
-              ) : (
-                <Loader />
               )}
             </Item.Group>
           </Segment>

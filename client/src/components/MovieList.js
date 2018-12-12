@@ -1,14 +1,8 @@
 import React from 'react';
 import MovieCard from './MovieCard';
 import MainPagination from './MainPagination';
-import {
-  Dropdown,
-  Grid,
-  GridColumn,
-  Loader,
-  Icon,
-  Message
-} from 'semantic-ui-react';
+import CardPlaceholder from './CardPlaceholder';
+import { Dropdown, Grid, GridColumn, Icon, Message } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
@@ -21,7 +15,9 @@ class MovieList extends React.Component {
       order: 'tr',
       time: 'a',
       limit: 10,
-      page: 1
+      page: 1,
+      fetchingMovieData: true,
+      fetchingSavedData: true
     };
     this.getData = this.getData.bind(this);
   }
@@ -36,23 +32,29 @@ class MovieList extends React.Component {
 
   getSavedData = () => {
     console.log('MovieList -> getSavedData()');
-    axios.get('/api/movies').then(
-      res => {
-        if (res.status === 200) {
-          console.log({ getSavedData: res.data });
-          this.setState({ savedMoviesList: res.data.videos });
-          if (this.props.location.state) {
-            console.log('getSavedData() -> scroll to saved position!');
-            window.scrollTo(0, this.props.location.state.scrollPos);
+    this.setState({ fetchingSavedData: true });
+    axios
+      .get('/api/movies')
+      .then(
+        res => {
+          if (res.status === 200) {
+            console.log({ getSavedData: res.data });
+            this.setState({ savedMoviesList: res.data.videos });
+            if (this.props.location.state) {
+              console.log('getSavedData() -> scroll to saved position!');
+              window.scrollTo(0, this.props.location.state.scrollPos);
+            }
+          } else {
+            console.log('get saved movie failed');
           }
-        } else {
-          console.log('get saved movie failed');
+        },
+        err => {
+          console.error(err);
         }
-      },
-      err => {
-        console.error(err);
-      }
-    );
+      )
+      .then(() => {
+        this.setState({ fetchingSavedData: false });
+      });
   };
 
   async componentDidMount() {
@@ -71,7 +73,7 @@ class MovieList extends React.Component {
       await this.updataApiUrl();
       await this.getData();
       await this.getSavedData();
-      window.scrollTo(0, 0);
+      await window.scrollTo(0, 0);
       document.body.style.zoom = 1.0;
     }
   }
@@ -109,6 +111,7 @@ class MovieList extends React.Component {
   };
 
   getData = async () => {
+    this.setState({ fetchingMovieData: true });
     const params = new URLSearchParams(window.location.search);
     await this.setState({
       order: params.get('o') ? params.get('o') : 'tr',
@@ -122,6 +125,7 @@ class MovieList extends React.Component {
       .get(api_url)
       .then(res => {
         if (res.status === 200) {
+          // this.setState({ fetchingMovieData: false });
           console.log(res.data);
           this.setState({
             videos: res.data.response.videos,
@@ -133,6 +137,9 @@ class MovieList extends React.Component {
       })
       .catch(err => {
         console.error(err);
+      })
+      .then(() => {
+        this.setState({ fetchingMovieData: false });
       });
   };
 
@@ -202,7 +209,9 @@ class MovieList extends React.Component {
       order,
       time,
       savedMoviesList,
-      scrollPos
+      scrollPos,
+      fetchingMovieData,
+      fetchingSavedData
     } = this.state;
 
     return (
@@ -213,6 +222,7 @@ class MovieList extends React.Component {
             <strong>{this.props.match.params.search_query}'</strong>
           </p>
         ) : null}
+
         <Grid columns={3} textAlign="left" stackable>
           <GridColumn textAlign="left" verticalAlign="bottom">
             <Dropdown
@@ -320,15 +330,16 @@ class MovieList extends React.Component {
           </GridColumn>
 
           <GridColumn textAlign="center">
-            {videos && savedMoviesList ? (
+            {fetchingMovieData ? null : (
               <MainPagination
                 activePage={page}
                 totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
                 changePage={this.changePage}
               />
-            ) : null}
+            )}
           </GridColumn>
         </Grid>
+
         {total_videos === 0 ? (
           <Message color="teal">
             <Message.Header>
@@ -337,7 +348,9 @@ class MovieList extends React.Component {
           </Message>
         ) : null}
 
-        {videos && savedMoviesList ? (
+        {fetchingMovieData || fetchingSavedData ? (
+          <CardPlaceholder />
+        ) : (
           videos.map((item, key) => {
             let saved = false;
             let saved_id = null;
@@ -359,16 +372,15 @@ class MovieList extends React.Component {
               />
             );
           })
-        ) : (
-          <Loader active />
         )}
-        {videos && savedMoviesList ? (
+
+        {fetchingMovieData ? null : (
           <MainPagination
             activePage={page}
             totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
             changePage={this.changePage}
           />
-        ) : null}
+        )}
       </div>
     );
   }
