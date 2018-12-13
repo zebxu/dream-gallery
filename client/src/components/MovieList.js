@@ -17,7 +17,9 @@ class MovieList extends React.Component {
       limit: 10,
       page: 1,
       fetchingMovieData: true,
-      fetchingSavedData: true
+      fetchingSavedData: true,
+      saveButtonLoading: false,
+      saveButtonKey: -1
     };
     this.getData = this.getData.bind(this);
   }
@@ -154,7 +156,10 @@ class MovieList extends React.Component {
     await window.scrollTo(0, 0);
   };
 
-  saveMovie = video => {
+  saveMovie = (video, key) => {
+    console.log('MovieList => saveMovie() => ');
+    console.log({ key });
+    this.setState({ saveButtonLoading: true, saveButtonKey: key });
     axios
       .post('/api/movies', {
         video_data: { ...video, category: this.props.mode }
@@ -163,7 +168,7 @@ class MovieList extends React.Component {
         console.log(res);
         if (res.status === 201) {
           console.log('save movie successed');
-          this.getSavedData();
+          this.checkSaveSuccess();
         } else {
           console.log('save movie failed');
         }
@@ -173,13 +178,15 @@ class MovieList extends React.Component {
       });
   };
 
-  removeMovie = saved_id => {
+  removeMovie = (saved_id, key) => {
+    console.log('MovieList => removeMovie()');
+    this.setState({ saveButtonLoading: true, saveButtonKey: key });
     axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
           console.log('delete movie successed' + saved_id);
-          this.getSavedData();
+          this.checkSaveSuccess();
         } else {
           console.log('delete movie failed');
         }
@@ -188,12 +195,30 @@ class MovieList extends React.Component {
     );
   };
 
-  handleSaveButtonClick = (video, saved_id) => {
+  handleSaveButtonClick = (video, saved_id, key) => {
     if (saved_id) {
-      this.removeMovie(saved_id);
+      this.removeMovie(saved_id, key);
     } else {
-      this.saveMovie(video);
+      this.saveMovie(video, key);
     }
+  };
+
+  checkSaveSuccess = () => {
+    console.log('MovieList -> checkSaveSuccess()');
+    axios.get('/api/movies').then(
+      async res => {
+        if (res.status === 200) {
+          console.log({ getSavedData: res.data });
+          await this.setState({ savedMoviesList: res.data.videos });
+          this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
+        } else {
+          console.log('get saved movie failed');
+        }
+      },
+      err => {
+        console.error(err);
+      }
+    );
   };
 
   // saveScrollPos = () => {
@@ -211,7 +236,9 @@ class MovieList extends React.Component {
       savedMoviesList,
       scrollPos,
       fetchingMovieData,
-      fetchingSavedData
+      fetchingSavedData,
+      saveButtonLoading,
+      saveButtonKey
     } = this.state;
 
     return (
@@ -349,7 +376,7 @@ class MovieList extends React.Component {
         ) : null}
 
         {fetchingMovieData || fetchingSavedData
-          ? [...Array(10)].map(() => <CardPlaceholder />)
+          ? [...Array(10)].map((index, key) => <CardPlaceholder key={key} />)
           : videos.map((item, key) => {
               let saved = false;
               let saved_id = null;
@@ -363,11 +390,13 @@ class MovieList extends React.Component {
                 <MovieCard
                   video={item}
                   key={key}
+                  data_key={key}
                   saved={saved}
                   saved_id={saved_id}
                   handleClick={this.handleSaveButtonClick}
                   scrollPos={scrollPos}
                   lastPath={this.props.location}
+                  isLoading={key === saveButtonKey && saveButtonLoading}
                 />
               );
             })}

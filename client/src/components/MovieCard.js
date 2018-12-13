@@ -8,8 +8,8 @@ const MovieCard = ({
   handleClick,
   saved,
   saved_id,
-  scrollPos,
-  lastPath
+  isLoading,
+  data_key
 }) => (
   <Card centered fluid>
     <Image
@@ -52,9 +52,10 @@ const MovieCard = ({
           );
         })}
         <Button
+          loading={isLoading}
           icon="remove bookmark"
           floated="right"
-          onClick={() => handleClick(video, saved_id)}
+          onClick={() => handleClick(video, saved_id, data_key)}
           color={saved ? 'red' : 'grey'}
         />
       </Card.Description>
