@@ -2,7 +2,7 @@ import React from 'react';
 import { Item, Button } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
-export default function FavMovie({ video, removeFunc }) {
+export default function FavMovie({ video, removeFunc, removing }) {
   const date = new Date(video.date);
   return (
     <Item>
@@ -37,6 +37,7 @@ export default function FavMovie({ video, removeFunc }) {
           {video.video_data.viewnumber.toLocaleString()} views
         </Item.Extra>
         <Button
+          loading={removing}
           icon="remove bookmark"
           floated="right"
           color="red"

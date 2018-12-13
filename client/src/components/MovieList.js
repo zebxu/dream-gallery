@@ -32,20 +32,19 @@ class MovieList extends React.Component {
     mode: PropTypes.string.isRequired
   };
 
-  getSavedData = () => {
+  getSavedData = refresh => {
     console.log('MovieList -> getSavedData()');
-    this.setState({ fetchingSavedData: true });
+    if (refresh) {
+      this.setState({ fetchingSavedData: true });
+    }
     axios
       .get('/api/movies')
       .then(
-        res => {
+        async res => {
           if (res.status === 200) {
             console.log({ getSavedData: res.data });
-            this.setState({ savedMoviesList: res.data.videos });
-            if (this.props.location.state) {
-              console.log('getSavedData() -> scroll to saved position!');
-              window.scrollTo(0, this.props.location.state.scrollPos);
-            }
+            await this.setState({ savedMoviesList: res.data.videos });
+            this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
           } else {
             console.log('get saved movie failed');
           }
@@ -63,7 +62,7 @@ class MovieList extends React.Component {
     console.log('MovieList -> componentDidMount()');
     await this.updataApiUrl();
     await this.getData();
-    await this.getSavedData();
+    await this.getSavedData(true);
   }
 
   async componentDidUpdate(prevProps) {
@@ -74,7 +73,7 @@ class MovieList extends React.Component {
       });
       await this.updataApiUrl();
       await this.getData();
-      await this.getSavedData();
+      await this.getSavedData(true);
       await window.scrollTo(0, 0);
       document.body.style.zoom = 1.0;
     }
@@ -168,7 +167,7 @@ class MovieList extends React.Component {
         console.log(res);
         if (res.status === 201) {
           console.log('save movie successed');
-          this.checkSaveSuccess();
+          this.getSavedData(false);
         } else {
           console.log('save movie failed');
         }
@@ -186,7 +185,7 @@ class MovieList extends React.Component {
         console.log(res);
         if (res.status === 200) {
           console.log('delete movie successed' + saved_id);
-          this.checkSaveSuccess();
+          this.getSavedData(false);
         } else {
           console.log('delete movie failed');
         }
@@ -203,23 +202,23 @@ class MovieList extends React.Component {
     }
   };
 
-  checkSaveSuccess = () => {
-    console.log('MovieList -> checkSaveSuccess()');
-    axios.get('/api/movies').then(
-      async res => {
-        if (res.status === 200) {
-          console.log({ getSavedData: res.data });
-          await this.setState({ savedMoviesList: res.data.videos });
-          this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
-        } else {
-          console.log('get saved movie failed');
-        }
-      },
-      err => {
-        console.error(err);
-      }
-    );
-  };
+  // checkSaveSuccess = () => {
+  //   console.log('MovieList -> checkSaveSuccess()');
+  //   axios.get('/api/movies').then(
+  //     async res => {
+  //       if (res.status === 200) {
+  //         console.log({ getSavedData: res.data });
+  //         await this.setState({ savedMoviesList: res.data.videos });
+  //         this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
+  //       } else {
+  //         console.log('get saved movie failed');
+  //       }
+  //     },
+  //     err => {
+  //       console.error(err);
+  //     }
+  //   );
+  // };
 
   // saveScrollPos = () => {
   //   // console.log('MovieList -> saveScrollPos()');

@@ -21,7 +21,13 @@ export default class Favorite extends Component {
   //     videos: null
   //   };
   // }
-  state = { videos: null, filter: 'all', fetchingData: true };
+  state = {
+    videos: null,
+    filter: 'all',
+    fetchingData: true,
+    isRemoving: false,
+    removingKey: -1
+  };
 
   getUrlParams = () => {
     const params = new URLSearchParams(window.location.search);
@@ -34,22 +40,24 @@ export default class Favorite extends Component {
   async componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
       await this.getUrlParams();
-      await this.getData();
+      await this.getData(true);
       await window.scrollTo(0, 0);
     }
   }
 
   async componentDidMount() {
     await this.getUrlParams();
-    this.getData();
+    this.getData(true);
   }
+
   removeMovie = saved_id => {
+    this.setState({ isRemoving: true, removingKey: saved_id });
     axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
           console.log('delete movie successed' + saved_id);
-          this.getData();
+          this.getData(false);
         } else {
           console.log('delete movie failed');
         }
@@ -58,23 +66,26 @@ export default class Favorite extends Component {
     );
   };
 
-  getData = () => {
+  getData = refresh => {
     const { filter } = this.state;
-    this.setState({ fetchingData: true });
+    if (refresh) {
+      this.setState({ fetchingData: true });
+    }
     console.log('Favorite -> getData() ');
     axios
       .get(`/api/movies/${filter === 'all' ? '' : filter}`)
-      .then(res => {
+      .then(async res => {
         if (res.status === 200) {
           console.log(
             'api url',
             `http://localhost:5000/api/movies/${filter ? filter : ''}`
           );
           console.log(res.data);
-          this.setState({
+          await this.setState({
             videos: res.data.videos,
             total_videos: res.data.count
           });
+          this.setState({ isRemoving: false });
         } else {
           console.error('Can not fetch data');
         }
@@ -93,12 +104,20 @@ export default class Favorite extends Component {
     await this.props.history.push({
       search: `?filter=${filter}&p=${data.activePage}`
     });
-    await this.getData();
+    await this.getData(true);
     await window.scrollTo(0, 0);
   };
 
   render() {
-    const { videos, total_videos, page, filter, fetchingData } = this.state;
+    const {
+      videos,
+      total_videos,
+      page,
+      filter,
+      fetchingData,
+      removingKey,
+      isRemoving
+    } = this.state;
     return (
       <>
         <Navbar />
@@ -169,10 +188,12 @@ export default class Favorite extends Component {
                       <FavMovie
                         video={value}
                         key={key}
+                        removing={value._id === removingKey && isRemoving}
                         removeFunc={this.removeMovie}
                       />
                     );
                   }
+                  return null;
                 })
               )}
             </Item.Group>

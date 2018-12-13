@@ -34,7 +34,8 @@
 - [ ] Favorite preview video on hover
 - [ ] Redux refacotr, reduce api calls, caching
 - [ ] Render movie page using template engine and Node.js
-- [ ] Save button not refresh the whole page
+- [x] Save button not refresh the whole page
+- [x] movie page and favorite page save button loading
 
 ### Deployment
 
