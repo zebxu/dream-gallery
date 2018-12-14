@@ -7,11 +7,12 @@ import {
   Button,
   Card,
   Icon,
-  Loader,
-  Placeholder
+  Loader
 } from 'semantic-ui-react';
-import Footer from './Footer';
 import axios from 'axios';
+import { Helmet } from 'react-helmet';
+import { NavLink } from 'react-router-dom';
+import CardPlaceholder from './CardPlaceholder';
 
 class Movie extends React.Component {
   constructor(props) {
@@ -19,20 +20,23 @@ class Movie extends React.Component {
     this.state = {
       notFound: false,
       saved: false,
-      saved_id: null
+      saved_id: null,
+      fetchingMovieData: true,
+      fetchingSavedData: true,
+      saveButtonIsLoading: false
     };
     this.getSavedData = this.getSavedData.bind(this);
   }
 
   removeMovie = () => {
+    this.setState({ saveButtonIsLoading: true });
     const { saved_id } = this.state;
     axios.delete(`/api/movies/${saved_id}`).then(
       res => {
         console.log(res);
         if (res.status === 200) {
           console.log('delete movie successed' + saved_id);
-          this.setState({ saved: false });
-          this.fetchMovieData();
+          this.getSavedData(false);
         } else {
           console.log('delete movie failed');
         }
@@ -42,6 +46,7 @@ class Movie extends React.Component {
   };
 
   saveMovie = () => {
+    this.setState({ saveButtonIsLoading: true });
     const category = this.state.video.channel === '21' ? 'VR' : 'CH';
     console.log('channel', this.state.video.channel);
     axios
@@ -52,7 +57,7 @@ class Movie extends React.Component {
         console.log(res);
         if (res.status === 201) {
           console.log('save movie successed');
-          this.fetchMovieData();
+          this.getSavedData(false);
         } else {
           console.log('save movie failed');
         }
@@ -71,16 +76,22 @@ class Movie extends React.Component {
     }
   };
 
-  getSavedData = () => {
+  getSavedData = refresh => {
+    if (refresh) {
+      this.setState({ fetchingSavedData: true });
+    }
     axios.get('/api/movies').then(
-      res => {
+      async res => {
+        await this.setState({ saved: false });
         if (res.status === 200) {
-          res.data.videos.forEach((video, index) => {
+          await res.data.videos.forEach((video, index) => {
             if (video.video_data.vid === this.state.vid) {
               console.log('find saved!!');
               this.setState({ saved: true, saved_id: video._id });
             }
           });
+          await this.setState({ fetchingSavedData: false });
+          this.setState({ saveButtonIsLoading: false });
         } else {
           console.log('get saved movie failed');
         }
@@ -92,20 +103,21 @@ class Movie extends React.Component {
   };
 
   fetchMovieData = () => {
+    this.setState({ fetchingMovieData: true });
     axios
       .get(`https://api.avgle.com/v1/video/${this.props.match.params.vid}`)
-      .then(res => {
+      .then(async res => {
         console.log('featch movie data', res);
         if (res.data.success) {
-          this.setState({
+          await this.setState({
             ...res.data.response.video,
             video: res.data.response.video
           });
+          this.setState({ fetchingMovieData: false });
         } else {
           console.error('Video Not Found');
           this.setState({ notFound: true });
         }
-        this.getSavedData();
       })
       .catch(err => {
         console.error(err);
@@ -114,22 +126,7 @@ class Movie extends React.Component {
 
   componentDidMount() {
     this.fetchMovieData();
-    console.log('didMount -> scrollPos');
-    window.onpopstate = e => {
-      console.log('window.onpopstate');
-      if (this.props.location.state) {
-        this.props.history.push({
-          ...this.props.location.state.lastPath,
-          state: { scrollPos: this.props.location.state.scrollPos }
-        });
-      }
-    };
-    // window.addEventListener('beforeunload', function(e) {
-    //   // Cancel the event as stated by the standard.
-    //   e.preventDefault();
-    //   // Chrome requires returnValue to be set.
-    //   e.returnValue = '';
-    // });
+    this.getSavedData(true);
   }
 
   render() {
@@ -140,78 +137,76 @@ class Movie extends React.Component {
       keyword,
       viewnumber,
       duration,
-      saved
+      saved,
+      fetchingMovieData,
+      fetchingSavedData,
+      saveButtonIsLoading
     } = this.state;
-    if (embedded_url) {
-      return (
-        <>
-          <Navbar />
-          <Container>
-            <h1>{title}</h1>
+    return (
+      <div>
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
+        <Navbar />
+        <Container>
+          {fetchingMovieData || fetchingSavedData ? (
+            <CardPlaceholder />
+          ) : (
+            <div>
+              <h1>{title}</h1>
 
-            <Segment as={Card} fluid>
-              {notFound ? (
-                <span>Movie not found</span>
-              ) : embedded_url ? (
-                <iframe
-                  src={embedded_url}
-                  title="avgle"
-                  width="100%"
-                  height="500"
-                  frameBorder="0"
-                  allowFullScreen
-                  referrerpolicy="always"
-                />
-              ) : (
-                <Loader />
-              )}
-              <Card.Content>
-                <Card.Meta>
-                  {`${Math.floor(duration / 3600)}:${Math.floor(
-                    (duration % 3600) / 60
-                  )}:${Math.floor(duration % 60)}`}
-                </Card.Meta>
-                <Card.Description>
-                  {keyword}
-                  <Button
-                    icon="remove bookmark"
-                    floated="right"
-                    color={saved ? 'red' : 'grey'}
-                    onClick={this.handleSaveButtonClick}
+              <Segment as={Card} fluid>
+                {notFound ? (
+                  <span>Movie not found</span>
+                ) : embedded_url ? (
+                  <iframe
+                    src={embedded_url}
+                    title="avgle"
+                    width="100%"
+                    height="500"
+                    frameBorder="0"
+                    allowFullScreen
+                    referrerpolicy="always"
                   />
-                </Card.Description>
-              </Card.Content>
-              <Card.Content extra>
-                <span>
-                  <Icon name="eye" />
-                  {parseInt(viewnumber).toLocaleString()} views
-                </span>
-              </Card.Content>
-            </Segment>
-          </Container>
-          <Divider />
-          <Footer />
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Navbar />
-          <Container>
-            <Placeholder>
-              <Placeholder.Header image>
-                <Placeholder.Line />
-                <Placeholder.Line />
-              </Placeholder.Header>
-              <Placeholder.Paragraph>
-                <Placeholder.Line length="medium" />
-                <Placeholder.Line length="short" />
-              </Placeholder.Paragraph>
-            </Placeholder>
-          </Container>
-        </>
-      );
-    }
+                ) : (
+                  <Loader />
+                )}
+                <Card.Content>
+                  <Card.Meta>
+                    {`${Math.floor(duration / 3600)}:${Math.floor(
+                      (duration % 3600) / 60
+                    )}:${Math.floor(duration % 60)}`}
+                  </Card.Meta>
+                  <Card.Description>
+                    {keyword.split(' ').map((keyword, key) => {
+                      return (
+                        <NavLink to={`/search/${keyword}`} key={key}>
+                          {keyword}{' '}
+                        </NavLink>
+                      );
+                    })}
+                    <Button
+                      loading={saveButtonIsLoading}
+                      icon="remove bookmark"
+                      floated="right"
+                      color={saved ? 'red' : 'grey'}
+                      onClick={this.handleSaveButtonClick}
+                    />
+                  </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
+                  <span>
+                    <Icon name="eye" />
+                    {parseInt(viewnumber).toLocaleString()} views
+                  </span>
+                </Card.Content>
+              </Segment>
+            </div>
+          )}
+        </Container>
+        <Divider />
+      </div>
+    );
   }
 }
 

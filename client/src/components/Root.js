@@ -1,5 +1,4 @@
 import Landing from './Landing';
-import Movie from './Movie';
 import { Route, Switch } from 'react-router-dom';
 import React from 'react';
 import Favorite from './Favorite';
@@ -25,7 +24,6 @@ const Root = () => {
           path="/all"
           render={props => <Landing {...props} mode="ALL" />}
         />
-        <Route path="/movie/:vid" exact component={Movie} />
         <Route component={NotFound} />
       </Switch>
     </React.Fragment>

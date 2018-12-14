@@ -1,0 +1,40 @@
+<div class="ui segment">
+  <div class="ui secondary  menu">
+    <div class="header item" style="color: #2BBBAD;">MY Avgle</div>
+    <a class="item" href="/vr"> VR </a>
+    <a class="item" href="/ch">
+      中文字幕
+    </a>
+    <a class="item" href="/all"> All </a>
+    <div class="right menu">
+      <div class="item">
+        <a class="item" href="/favorite"><i class="teal heart icon"></i>收藏</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="ui container">
+  <div class="ui card fluid">
+    <iframe src="{{embedded_url}}" title="avgle" width="100%" height="500" frameborder="0" allowfullscreen
+      referrerpolicy="always"></iframe>
+    <div class="content">
+      <div class="header">{{title}}</div>
+      <div class="meta">{{duration}}</div>
+      <div class="description">
+        {{#each keyword}}
+        <a href="/search/{{this}}">{{this}}</a>
+        {{/each}}
+      </div>
+    </div>
+    <div class="extra content">
+      <i class="eye icon"></i>
+      {{viewnumber}} views
+    </div>
+  </div>
+</div>
+<br />
+<hr />
+<footer>
+  <p>copyright &copy; 2018</p>
+</footer>
+</body>
