@@ -195,7 +195,7 @@ class Navbar extends Component {
             active={activeItem === 'saved'}
             onClick={this.handleItemClick}
           >
-            <Icon name="remove bookmark" color="red" />
+            <Icon name="remove bookmark" color="red" size="mini" />
             Saved
           </Menu.Item>
           <Menu.Item
@@ -227,6 +227,14 @@ class Navbar extends Component {
           >
             All
           </Menu.Item>
+
+          <Menu.Item
+            onClick={() => {
+              this.focus();
+              this.hideSidebar();
+            }}
+            icon="search"
+          />
 
           <Menu.Item onClick={this.hideSidebar}>&#10005;</Menu.Item>
         </Sidebar>
