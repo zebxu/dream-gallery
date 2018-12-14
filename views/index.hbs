@@ -1,24 +1,38 @@
+{{!-- {{Navbar}} --}}
 <div class="ui segment">
-  <div class="ui secondary  menu">
+  <div class="ui secondary menu">
     <div class="header item" style="color: #2BBBAD;">MY Avgle</div>
-    <a class="item" href="/vr"> VR </a>
-    <a class="item" href="/ch">
-      中文字幕
-    </a>
-    <a class="item" href="/all"> All </a>
+
+
+    <div class="ui grid computer only">
+      <a class="item" href="/vr"> VR </a>
+      <a class="item" href="/ch">
+        中文字幕
+      </a>
+      <a class="item" href="/all"> All </a>
+    </div>
     <div class="right menu">
       <div class="item">
         <a class="item" href="/favorite"><i class="teal heart icon"></i>收藏</a>
       </div>
+      <div class="item">
+        <form class="ui form" onsubmit="return search()">
+          <div class="ui transparent input">
+            <input id="search_input" type="text" placeholder="Search...">
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+{{!-- {{Movie Component}} --}}
 <div class="ui container">
+  <h1>{{title}}</h1>
   <div class="ui card fluid">
     <iframe src="{{embedded_url}}" title="avgle" width="100%" height="500" frameborder="0" allowfullscreen
       referrerpolicy="always"></iframe>
     <div class="content">
-      <div class="header">{{title}}</div>
       <div class="meta">{{duration}}</div>
       <div class="description">
         {{#each keyword}}
@@ -38,3 +52,12 @@
   <p>copyright &copy; 2018</p>
 </footer>
 </body>
+
+<script>
+  function search() {
+    var url = "/search/" + document.getElementById("search_input").value;
+    location.href = url;
+    document.getElementById("search_input").value = "";
+    return false;
+  }
+</script>
