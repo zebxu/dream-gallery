@@ -27,6 +27,7 @@ export default class MenuExampleInvertedSegment extends Component {
     return (
       <Menu
         inverted
+        color="teal"
         fixed="top"
         style={{
           transform: `translateY(${
