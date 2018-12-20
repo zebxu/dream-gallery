@@ -78,7 +78,7 @@ export default class MenuExampleInvertedSegment extends Component {
             onClick={this.handleItemClick}
             position="right"
           >
-            <Icon name="heart" color="teal" />
+            <Icon name="heart" color="white" />
           </Menu.Item>
 
           <Menu.Item style={{ padding: '.5rem' }}>
