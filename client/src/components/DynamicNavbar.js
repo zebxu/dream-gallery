@@ -31,7 +31,7 @@ export default class MenuExampleInvertedSegment extends Component {
         fixed="top"
         style={{
           transform: `translateY(${
-            scrollPos > 150 ? Math.min(-50 + (scrollPos - 150), 0) : -50
+            scrollPos > 150 ? Math.min(-50 + (scrollPos - 150), 0) : -100
           }px)`
         }}
       >
