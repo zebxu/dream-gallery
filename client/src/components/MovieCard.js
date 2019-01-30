@@ -16,11 +16,12 @@ const MovieCard = ({
       as="a"
       href={`/movie/${video.vid}`}
       src={video.preview_url}
+      target="_blank"
       fluid
       centered
     />
 
-    <a href={`/movie/${video.vid}`}>
+    <a href={`/movie/${video.vid}`} target="_blank">
       <ReactPlayer
         url={video.preview_video_url}
         playing
@@ -36,6 +37,7 @@ const MovieCard = ({
         as="a"
         href={`/movie/${video.vid}`}
         style={{ color: '#000' }}
+        target="_blank"
       >
         {video.title}
       </Card.Header>
