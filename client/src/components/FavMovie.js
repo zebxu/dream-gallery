@@ -11,9 +11,14 @@ export default function FavMovie({ video, removeFunc, removing }) {
         href={`/movie/${video.video_data.vid}`}
         size="medium"
         src={video.video_data.preview_url}
+        target="_blank"
       />
       <Item.Content>
-        <Item.Header as="a" href={`/movie/${video.video_data.vid}`}>
+        <Item.Header
+          as="a"
+          href={`/movie/${video.video_data.vid}`}
+          target="_blank"
+        >
           {video.video_data.title}
         </Item.Header>
         <Item.Meta>{date.toLocaleDateString()}</Item.Meta>
