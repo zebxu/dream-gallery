@@ -12,6 +12,7 @@ import FavMovie from './FavMovie';
 import axios from 'axios';
 import Navbar from './Navbar';
 import MainPagination from './MainPagination';
+import * as firebase from 'firebase';
 
 export default class Favorite extends Component {
   // constructor(props) {
@@ -52,50 +53,71 @@ export default class Favorite extends Component {
 
   removeMovie = saved_id => {
     this.setState({ isRemoving: true, removingKey: saved_id });
-    axios.delete(`/api/movies/${saved_id}`).then(
-      res => {
-        console.log(res);
-        if (res.status === 200) {
-          console.log('delete movie successed' + saved_id);
-          this.getData(false);
-        } else {
-          console.log('delete movie failed');
-        }
-      },
-      err => console.log(err)
-    );
+    const ref = firebase.database().ref('movies/' + saved_id);
+    ref
+      .remove()
+      .then(() => {
+        console.log('Remove succeeded.');
+        this.getData(false);
+      })
+      .catch(function(error) {
+        console.log('Remove failed: ' + error.message);
+      });
+    // axios.delete(`/api/movies/${saved_id}`).then(
+    //   res => {
+    //     console.log(res);
+    //     if (res.status === 200) {
+    //       console.log('delete movie successed' + saved_id);
+    //       this.getData(false);
+    //     } else {
+    //       console.log('delete movie failed');
+    //     }
+    //   },
+    //   err => console.log(err)
+    // );
   };
 
-  getData = refresh => {
+  getData = async refresh => {
     const { filter } = this.state;
     if (refresh) {
       this.setState({ fetchingData: true });
     }
     console.log('Favorite -> getData() ');
-    axios
-      .get(`/api/movies/${filter === 'all' ? '' : filter}`)
-      .then(async res => {
-        if (res.status === 200) {
-          console.log(
-            'api url',
-            `http://localhost:5000/api/movies/${filter ? filter : ''}`
-          );
-          console.log(res.data);
-          await this.setState({
-            videos: res.data.videos,
-            total_videos: res.data.count
-          });
-          this.setState({ isRemoving: false });
-        } else {
-          console.error('Can not fetch data');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      })
-      .then(() => {
-        this.setState({ fetchingData: false });
+    const ref = firebase.database().ref('movies');
+    ref.on('value', async snap => {
+      console.log(snap.val());
+      console.log(snap.numChildren());
+      await this.setState({
+        videos: snap.val(),
+        total_videos: snap.numChildren()
       });
+      this.setState({ isRemoving: false });
+      this.setState({ fetchingData: false });
+    });
+    // axios
+    //   .get(`/api/movies/${filter === 'all' ? '' : filter}`)
+    //   .then(async res => {
+    //     if (res.status === 200) {
+    //       console.log(
+    //         'api url',
+    //         `http://localhost:5000/api/movies/${filter ? filter : ''}`
+    //       );
+    //       console.log(res.data);
+    //       await this.setState({
+    //         videos: res.data.videos,
+    //         total_videos: res.data.count
+    //       });
+    //       this.setState({ isRemoving: false });
+    //     } else {
+    //       console.error('Can not fetch data');
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   })
+    //   .then(() => {
+    //     this.setState({ fetchingData: false });
+    //   });
   };
 
   changePage = async (event, data) => {
@@ -182,13 +204,14 @@ export default class Favorite extends Component {
                   <br />
                 </>
               ) : (
-                videos.map((value, key) => {
-                  if (Math.floor(key / 10) === page - 1) {
+                Object.keys(videos).map((key, index) => {
+                  if (Math.floor(index / 10) === page - 1) {
                     return (
                       <FavMovie
-                        video={value}
+                        video={videos[key]}
                         key={key}
-                        removing={value._id === removingKey && isRemoving}
+                        remove_id={key}
+                        removing={videos[key].vid === removingKey && isRemoving}
                         removeFunc={this.removeMovie}
                       />
                     );

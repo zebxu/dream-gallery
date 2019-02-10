@@ -6,6 +6,7 @@ import { Dropdown, Grid, GridColumn, Icon, Message } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import * as firebase from 'firebase';
 
 class MovieList extends React.Component {
   constructor(props) {
@@ -37,25 +38,38 @@ class MovieList extends React.Component {
     if (refresh) {
       this.setState({ fetchingSavedData: true });
     }
-    axios
-      .get('/api/movies')
-      .then(
-        async res => {
-          if (res.status === 200) {
-            console.log({ getSavedData: res.data });
-            await this.setState({ savedMoviesList: res.data.videos });
-            this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
-          } else {
-            console.log('get saved movie failed');
-          }
-        },
-        err => {
-          console.error(err);
-        }
-      )
-      .then(() => {
-        this.setState({ fetchingSavedData: false });
+    const ref = firebase.database().ref('movies');
+    ref.on('value', async snap => {
+      console.log(snap.val());
+      console.log(snap.numChildren());
+      await this.setState({
+        savedMoviesList: snap.val()
       });
+      this.setState({
+        saveButtonLoading: false,
+        saveButtonKey: -1,
+        fetchingSavedData: false
+      });
+    });
+    // axios
+    //   .get('/api/movies')
+    //   .then(
+    //     async res => {
+    //       if (res.status === 200) {
+    //         console.log({ getSavedData: res.data });
+    //         await this.setState({ savedMoviesList: res.data.videos });
+    //         this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
+    //       } else {
+    //         console.log('get saved movie failed');
+    //       }
+    //     },
+    //     err => {
+    //       console.error(err);
+    //     }
+    //   )
+    //   .then(() => {
+    //     this.setState({ fetchingSavedData: false });
+    //   });
   };
 
   async componentDidMount() {
@@ -159,39 +173,55 @@ class MovieList extends React.Component {
     console.log('MovieList => saveMovie() => ');
     console.log({ key });
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
-    axios
-      .post('/api/movies', {
-        video_data: { ...video, category: this.props.mode }
-      })
-      .then(res => {
-        console.log(res);
-        if (res.status === 201) {
-          console.log('save movie successed');
-          this.getSavedData(false);
-        } else {
-          console.log('save movie failed');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    const ref = firebase.database().ref('movies');
+    ref.push(video).then(() => {
+      console.log('save movie successed');
+      this.getSavedData(false);
+    });
+    // axios
+    //   .post('/api/movies', {
+    //     video_data: { ...video, category: this.props.mode }
+    //   })
+    //   .then(res => {
+    //     console.log(res);
+    //     if (res.status === 201) {
+    //       console.log('save movie successed');
+    //       this.getSavedData(false);
+    //     } else {
+    //       console.log('save movie failed');
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   });
   };
 
   removeMovie = (saved_id, key) => {
     console.log('MovieList => removeMovie()');
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
-    axios.delete(`/api/movies/${saved_id}`).then(
-      res => {
-        console.log(res);
-        if (res.status === 200) {
-          console.log('delete movie successed' + saved_id);
-          this.getSavedData(false);
-        } else {
-          console.log('delete movie failed');
-        }
-      },
-      err => console.log(err)
-    );
+    const ref = firebase.database().ref('movies/' + saved_id);
+    ref
+      .remove()
+      .then(() => {
+        console.log('Remove succeeded.');
+        this.getSavedData(false);
+      })
+      .catch(function(error) {
+        console.log('Remove failed: ' + error.message);
+      });
+
+    // axios.delete(`/api/movies/${saved_id}`).then(
+    //   res => {
+    //     console.log(res);
+    //     if (res.status === 200) {
+    //       console.log('delete movie successed' + saved_id);
+    //       this.getSavedData(false);
+    //     } else {
+    //       console.log('delete movie failed');
+    //     }
+    //   },
+    //   err => console.log(err)
+    // );
   };
 
   handleSaveButtonClick = (video, saved_id, key) => {
@@ -379,10 +409,10 @@ class MovieList extends React.Component {
           : videos.map((item, key) => {
               let saved = false;
               let saved_id = null;
-              savedMoviesList.forEach((video, index) => {
-                if (video.video_data.vid === item.vid) {
+              Object.keys(savedMoviesList).forEach((key, index) => {
+                if (savedMoviesList[key].vid === item.vid) {
                   saved = true;
-                  saved_id = video._id;
+                  saved_id = key;
                 }
               });
               return (

@@ -13,24 +13,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('hbs', hbs({ defaultLayout: 'main', extname: 'hbs' }));
 app.set('view engine', 'hbs');
 
-const db = require('./config/keys').mongoURI;
+// const db = require('./config/keys').mongoURI;
 
-mongoose
-  .connect(
-    db,
-    { useNewUrlParser: true }
-  )
-  .then(() => {
-    console.log('Mongo connected');
-  })
-  .catch(err => {
-    console.error(err);
-  });
+// mongoose
+//   .connect(
+//     db,
+//     { useNewUrlParser: true }
+//   )
+//   .then(() => {
+//     console.log('Mongo connected');
+//   })
+//   .catch(err => {
+//     console.error(err);
+//   });
 
-const movies = require('./routes/api/movies');
+// const movies = require('./routes/api/movies');
 const pages = require('./routes/pages/movie_page');
 
-app.use('/api/movies', movies);
+// app.use('/api/movies', movies);
 app.use('/movie', pages);
 app.use(express.static('client/src/semantic/dist'));
 

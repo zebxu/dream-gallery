@@ -5,6 +5,17 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import './semantic/dist/semantic.min.css';
 import './style.css';
+import * as firebase from 'firebase';
+
+var config = {
+  apiKey: 'AIzaSyADi8T3x8uB52tUBFtYPrnHlAA9kuuFLBg',
+  authDomain: 'dream-gallery-cf32a.firebaseapp.com',
+  databaseURL: 'https://dream-gallery-cf32a.firebaseio.com',
+  projectId: 'dream-gallery-cf32a',
+  storageBucket: 'dream-gallery-cf32a.appspot.com',
+  messagingSenderId: '1015813923361'
+};
+firebase.initializeApp(config);
 
 ReactDOM.render(
   <Router>
