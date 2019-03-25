@@ -5,7 +5,10 @@ import { NavLink } from 'react-router-dom';
 export default class MenuExampleInvertedSegment extends Component {
   state = { visible: false, searchInputVisible: false, search_input: '' };
 
-  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+  handleItemClick = (e, { name }) => {
+    this.setState({ activeItem: name });
+    window.scrollTo(0, 0);
+  };
 
   showDynamicNavbar = () => {
     const scrollPos = document.scrollingElement.scrollTop;
