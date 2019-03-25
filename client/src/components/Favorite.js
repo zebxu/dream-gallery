@@ -9,7 +9,6 @@ import {
 } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import FavMovie from './FavMovie';
-import axios from 'axios';
 import Navbar from './Navbar';
 import MainPagination from './MainPagination';
 import * as firebase from 'firebase';
@@ -38,16 +37,16 @@ export default class Favorite extends Component {
     this.setState({ page: params.get('p') ? parseInt(params.get('p')) : 1 });
   };
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
-      await this.getUrlParams();
-      await this.getData(true);
-      await window.scrollTo(0, 0);
+      this.getUrlParams();
+      this.getData(true);
+      window.scrollTo(0, 0);
     }
   }
 
-  async componentDidMount() {
-    await this.getUrlParams();
+  componentDidMount() {
+    this.getUrlParams();
     this.getData(true);
   }
 
@@ -77,57 +76,31 @@ export default class Favorite extends Component {
     // );
   };
 
-  getData = async refresh => {
-    const { filter } = this.state;
+  getData = refresh => {
     if (refresh) {
       this.setState({ fetchingData: true });
     }
     console.log('Favorite -> getData() ');
     const ref = firebase.database().ref('movies');
-    ref.on('value', async snap => {
+    ref.on('value', snap => {
       console.log(snap.val());
       console.log(snap.numChildren());
-      await this.setState({
+      this.setState({
         videos: snap.val(),
         total_videos: snap.numChildren()
       });
-      this.setState({ isRemoving: false });
-      this.setState({ fetchingData: false });
+      this.setState({ isRemoving: false, fetchingData: false });
     });
-    // axios
-    //   .get(`/api/movies/${filter === 'all' ? '' : filter}`)
-    //   .then(async res => {
-    //     if (res.status === 200) {
-    //       console.log(
-    //         'api url',
-    //         `http://localhost:5000/api/movies/${filter ? filter : ''}`
-    //       );
-    //       console.log(res.data);
-    //       await this.setState({
-    //         videos: res.data.videos,
-    //         total_videos: res.data.count
-    //       });
-    //       this.setState({ isRemoving: false });
-    //     } else {
-    //       console.error('Can not fetch data');
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   })
-    //   .then(() => {
-    //     this.setState({ fetchingData: false });
-    //   });
   };
 
-  changePage = async (event, data) => {
+  changePage = (event, data) => {
     const { filter } = this.state;
-    await this.setState({ page: data.activePage });
-    await this.props.history.push({
+    this.setState({ page: data.activePage });
+    this.props.history.push({
       search: `?filter=${filter}&p=${data.activePage}`
     });
-    await this.getData(true);
-    await window.scrollTo(0, 0);
+    this.getData(true);
+    window.scrollTo(0, 0);
   };
 
   render() {

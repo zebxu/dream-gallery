@@ -74,9 +74,9 @@ class MovieList extends React.Component {
 
   async componentDidMount() {
     console.log('MovieList -> componentDidMount()');
-    await this.updataApiUrl();
+    // this.updateApiUrl();
     await this.getData();
-    await this.getSavedData(true);
+    this.getSavedData(true);
   }
 
   async componentDidUpdate(prevProps) {
@@ -85,16 +85,16 @@ class MovieList extends React.Component {
         thisProp: this.props.location.search,
         prevProp: prevProps.location.search
       });
-      await this.updataApiUrl();
+      // this.updateApiUrl();
       await this.getData();
-      await this.getSavedData(true);
-      await window.scrollTo(0, 0);
+      this.getSavedData(true);
+      window.scrollTo(0, 0);
       document.body.style.zoom = 1.0;
     }
   }
 
   // Update api endpoint according to this.props.mode given by router
-  updataApiUrl = () => {
+  updateApiUrl = () => {
     console.log('MovieList -> updateApiUrl()');
     const { order, time, limit, page } = this.state;
     if (this.props.mode === 'VR') {
@@ -133,40 +133,38 @@ class MovieList extends React.Component {
       time: params.get('t') ? params.get('t') : 'a',
       page: params.get('p') ? parseInt(params.get('p')) : 1
     });
-    await this.updataApiUrl();
+    this.updateApiUrl();
     const { api_url } = this.state;
     console.log('MovieList -> getData() ' + api_url);
-    axios
-      .get(api_url)
-      .then(res => {
-        if (res.status === 200) {
-          // this.setState({ fetchingMovieData: false });
-          console.log(res.data);
-          this.setState({
-            videos: res.data.response.videos,
-            total_videos: res.data.response.total_videos
-          });
-        } else {
-          console.error('Can not fetch data');
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      })
-      .then(() => {
-        this.setState({ fetchingMovieData: false });
-      });
+    // use async/await syntax
+    try {
+      const res = await axios.get(api_url);
+      if (res.status === 200) {
+        // this.setState({ fetchingMovieData: false });
+        console.log(res.data);
+        this.setState({
+          videos: res.data.response.videos,
+          total_videos: res.data.response.total_videos
+        });
+      } else {
+        console.error('Can not fetch data');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    this.setState({ fetchingMovieData: false });
   };
 
-  changePage = async (event, data) => {
+  changePage = (event, data) => {
     console.log('MovieList -> changePage()');
     const { order, time } = this.state;
-    await this.setState({ page: data.activePage });
-    await this.props.history.push({
+    this.setState({ page: data.activePage });
+    this.props.history.push({
       search: `?o=${order}&t=${time}&p=${data.activePage}`
     });
-    await this.getData();
-    await window.scrollTo(0, 0);
+    // await this.getData();
+    window.scrollTo(0, 0);
   };
 
   saveMovie = (video, key) => {
