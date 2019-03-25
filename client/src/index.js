@@ -8,7 +8,7 @@ import './style.css';
 import * as firebase from 'firebase';
 
 var config = {
-  apiKey: 'AIzaSyADi8T3x8uB52tUBFtYPrnHlAA9kuuFLBg',
+  apiKey: process.env.firebase_api_key,
   authDomain: 'dream-gallery-cf32a.firebaseapp.com',
   databaseURL: 'https://dream-gallery-cf32a.firebaseio.com',
   projectId: 'dream-gallery-cf32a',
