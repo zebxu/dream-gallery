@@ -169,7 +169,7 @@ export default class Favorite extends Component {
             </Dropdown.Menu>
           </Dropdown>
           <Segment raised>
-            <Item.Group>
+            <Item.Group relaxed divided>
               {fetchingData ? (
                 <>
                   <br />
