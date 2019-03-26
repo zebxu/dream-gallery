@@ -17,8 +17,9 @@ export default class FavMovie extends Component {
     return (
       <Item>
         <Item.Image
-          as="a"
-          href={`/movie/${video.vid}`}
+          onClick={() => {
+            this.setState({ previewControl: true });
+          }}
           size="large"
           src={video.preview_url}
           onMouseEnter={() => {
