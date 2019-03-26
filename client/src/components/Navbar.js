@@ -39,16 +39,17 @@ class Navbar extends Component {
     this.inputRef.focus();
   };
 
-  toSearchPage = async e => {
+  toSearchPage = e => {
     console.log('Navbar => toSearchPage()');
     const { search_input } = this.state;
     if (search_input !== '') {
-      await this.props.history.push({
+      this.props.history.push({
         pathname: `/search/${search_input}`
       });
       this.hideSearch();
       this.setState({ search_input: '' });
       document.activeElement.blur();
+      window.scroll(0, 0);
     }
   };
 
