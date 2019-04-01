@@ -39,6 +39,9 @@
         <a href="/search/{{this}}">{{this}}</a>
         {{/each}}
       </div>
+      <button id="save-btn" class="ui icon button right floated">
+        <i class="heart icon"></i>
+      </button>
     </div>
     <div class="extra content">
       <i class="eye icon"></i>
@@ -52,12 +55,41 @@
   <p>copyright &copy; 2018</p>
 </footer>
 </body>
-
 <script>
-  function search() {
-    var url = "/search/" + document.getElementById("search_input").value;
-    location.href = url;
-    document.getElementById("search_input").value = "";
-    return false;
-  }
+  (function () {
+    const config = {
+      apiKey: "AIzaSyADi8T3x8uB52tUBFtYPrnHlAA9kuuFLBg",
+      authDomain: "dream-gallery-cf32a.firebaseapp.com",
+      databaseURL: "https://dream-gallery-cf32a.firebaseio.com",
+      projectId: "dream-gallery-cf32a",
+      storageBucket: "dream-gallery-cf32a.appspot.com",
+      messagingSenderId: "1015813923361"
+    };
+    firebase.initializeApp(config);
+    function search() {
+      var url = "/search/" + document.getElementById("search_input").value;
+      location.href = url;
+      document.getElementById("search_input").value = "";
+      return false;
+    }
+    async function save(btn) {
+      let video = {}
+      try {
+        const res = await fetch(`https://api.avgle.com/v1/video/${window.location.href.split('/')[4]}`)
+        const json = await res.json()
+        video = json.response.video
+        console.log(video)
+      } catch (err) {
+        console.error(err)
+      }
+
+      const ref = firebase.database().ref('movies');
+      ref.push(video);
+      btn.classList.add('red');
+    }
+    let btn = document.getElementById('save-btn')
+    btn.addEventListener('click', () => {
+      save(btn)
+    })
+  })();
 </script>

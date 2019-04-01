@@ -31,11 +31,13 @@
 - [x] Fix search on search result page
 - [x] Keyword link to search
 - [ ] Dynamic search recommendation
-- [ ] Favorite preview video on hover
+- [x] Favorite preview video on hover
 - [ ] Redux refacotr, reduce api calls, caching
-- [ ] Render movie page using template engine and Node.js
+- [x] Render movie page using template engine and Node.js
 - [x] Save button not refresh the whole page
 - [x] movie page and favorite page save button loading
+- [ ] improve favorite page on mobile
+- [ ] Fix saved movie invalid date
 
 ### Deployment
 

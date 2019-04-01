@@ -14,13 +14,6 @@ import MainPagination from './MainPagination';
 import * as firebase from 'firebase';
 
 export default class Favorite extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.getData = this.getData.bind(this);
-  //   this.state = {
-  //     videos: null
-  //   };
-  // }
   state = {
     videos: null,
     filter: 'all',
@@ -29,81 +22,65 @@ export default class Favorite extends Component {
     removingKey: -1
   };
 
-  getUrlParams = () => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('filter')) {
-      this.setState({ filter: params.get('filter') });
-    }
-    this.setState({ page: params.get('p') ? parseInt(params.get('p')) : 1 });
-  };
-
   componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
-      this.getUrlParams();
-      this.getData(true);
+      this.setState({ fetchingData: true });
+      this.fetchData();
       window.scrollTo(0, 0);
     }
   }
 
   componentDidMount() {
-    this.getUrlParams();
-    this.getData(true);
+    this.fetchData();
   }
-
-  removeMovie = saved_id => {
-    this.setState({ isRemoving: true, removingKey: saved_id });
-    const ref = firebase.database().ref('movies/' + saved_id);
-    ref
-      .remove()
-      .then(() => {
-        console.log('Remove succeeded.');
-        this.getData(false);
-      })
-      .catch(function(error) {
-        console.log('Remove failed: ' + error.message);
-      });
-    // axios.delete(`/api/movies/${saved_id}`).then(
-    //   res => {
-    //     console.log(res);
-    //     if (res.status === 200) {
-    //       console.log('delete movie successed' + saved_id);
-    //       this.getData(false);
-    //     } else {
-    //       console.log('delete movie failed');
-    //     }
-    //   },
-    //   err => console.log(err)
-    // );
+  // call fetch function and set state using result
+  fetchData = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const data = await this.getData();
+    this.setState({
+      videos: data.val,
+      total_videos: data.count,
+      isRemoving: false,
+      fetchingData: false,
+      filter: params.get('filter') ? params.get('filter') : 'all',
+      page: params.get('p') ? parseInt(params.get('p')) : 1
+    });
   };
 
-  getData = refresh => {
-    if (refresh) {
-      this.setState({ fetchingData: true });
-    }
+  removeMovie = async saved_id => {
+    this.setState({ isRemoving: true, removingKey: saved_id });
+    await firebase
+      .database()
+      .ref('movies/' + saved_id)
+      .remove();
+    console.log('Remove succeeded.');
+    this.fetchData();
+  };
+
+  getData = async () => {
     console.log('Favorite -> getData() ');
-    const ref = firebase.database().ref('movies');
-    ref.on('value', snap => {
-      console.log(snap.val());
-      console.log(snap.numChildren());
-      this.setState({
-        videos: snap.val(),
-        total_videos: snap.numChildren()
+    let data = {};
+    await firebase
+      .database()
+      .ref('movies')
+      .once('value', snap => {
+        console.log(snap.val());
+        console.log(snap.numChildren());
+        data = { val: snap.val(), count: snap.numChildren() };
       });
-      this.setState({ isRemoving: false, fetchingData: false });
-    });
+    return data;
   };
 
   changePage = (event, data) => {
     const { filter } = this.state;
-    this.setState({ page: data.activePage });
     this.props.history.push({
       search: `?filter=${filter}&p=${data.activePage}`
     });
-    this.getData(true);
     window.scrollTo(0, 0);
   };
 
   render() {
+    console.log('render()');
     const {
       videos,
       total_videos,

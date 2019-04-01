@@ -10,6 +10,7 @@ router.get('/:vid', (req, res) => {
         // console.log(api_res.data.response);
         const video = api_res.data.response.video;
         res.render('index', {
+          video,
           ...video,
           content: 'fuck',
           duration: `${Math.floor(video.duration / 3600)}:${Math.floor(

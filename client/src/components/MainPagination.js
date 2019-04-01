@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pagination } from 'semantic-ui-react';
 
-const MainPagination = ({ activePage, totalPages, changePage }) => (
+const MainPagination = ({ activePage, totalPages, changePage, key }) => (
   <Pagination
     activePage={activePage}
     totalPages={totalPages}
@@ -9,6 +9,7 @@ const MainPagination = ({ activePage, totalPages, changePage }) => (
     lastItem={null}
     size="mini"
     onPageChange={changePage}
+    key={key}
   />
 );
 

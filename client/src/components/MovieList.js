@@ -22,9 +22,7 @@ class MovieList extends React.Component {
       saveButtonLoading: false,
       saveButtonKey: -1
     };
-    this.getData = this.getData.bind(this);
   }
-
   static propTypes = {
     match: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
@@ -32,130 +30,101 @@ class MovieList extends React.Component {
     search_query: PropTypes.string,
     mode: PropTypes.string.isRequired
   };
-
-  getSavedData = refresh => {
-    console.log('MovieList -> getSavedData()');
-    if (refresh) {
-      this.setState({ fetchingSavedData: true });
-    }
-    const ref = firebase.database().ref('movies');
-    ref.on('value', async snap => {
-      console.log(snap.val());
-      console.log(snap.numChildren());
-      await this.setState({
-        savedMoviesList: snap.val()
-      });
-      this.setState({
-        saveButtonLoading: false,
-        saveButtonKey: -1,
-        fetchingSavedData: false
-      });
-    });
-    // axios
-    //   .get('/api/movies')
-    //   .then(
-    //     async res => {
-    //       if (res.status === 200) {
-    //         console.log({ getSavedData: res.data });
-    //         await this.setState({ savedMoviesList: res.data.videos });
-    //         this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
-    //       } else {
-    //         console.log('get saved movie failed');
-    //       }
-    //     },
-    //     err => {
-    //       console.error(err);
-    //     }
-    //   )
-    //   .then(() => {
-    //     this.setState({ fetchingSavedData: false });
-    //   });
-  };
-
-  async componentDidMount() {
-    console.log('MovieList -> componentDidMount()');
-    // this.updateApiUrl();
-    await this.getData();
-    this.getSavedData(true);
-  }
-
-  async componentDidUpdate(prevProps) {
-    if (this.props.location !== prevProps.location) {
-      console.log({
-        thisProp: this.props.location.search,
-        prevProp: prevProps.location.search
-      });
-      // this.updateApiUrl();
-      await this.getData();
-      this.getSavedData(true);
-      window.scrollTo(0, 0);
-      document.body.style.zoom = 1.0;
-    }
-  }
-
-  // Update api endpoint according to this.props.mode given by router
-  updateApiUrl = () => {
-    console.log('MovieList -> updateApiUrl()');
-    const { order, time, limit, page } = this.state;
-    if (this.props.mode === 'VR') {
-      this.setState({
-        api_url: `https://api.avgle.com/v1/videos/${page -
-          1}?o=${order}&t=${time}&c=21&limit=${limit}`
-      });
-    } else if (this.props.mode === 'SEARCH') {
-      const query = encodeURIComponent(this.props.match.params.search_query);
-      console.log({ query });
-      this.setState({
-        api_url: `https://api.avgle.com/v1/search/${query}/${page -
-          1}?o=${order}&t=${time}&limit=${limit}`
-      });
-    } else if (this.props.mode === 'CH') {
-      const ch_string = encodeURIComponent('中文字幕');
-      this.setState({
-        api_url: `https://api.avgle.com/v1/search/${ch_string}/${page -
-          1}?o=${order}&t=${time}&limit=${limit}`
-      });
-    } else if (this.props.mode === 'ALL') {
-      this.setState({
-        api_url: `https://api.avgle.com/v1/videos/${page -
-          1}?o=${order}&t=${time}&limit=${limit}`
-      });
-    } else {
-      console.error('NO MODE is given to MovieList component');
-    }
-  };
-
-  getData = async () => {
-    this.setState({ fetchingMovieData: true });
+  parseParams = () => {
     const params = new URLSearchParams(window.location.search);
-    await this.setState({
+    const params_obj = {
       order: params.get('o') ? params.get('o') : 'tr',
       time: params.get('t') ? params.get('t') : 'a',
-      page: params.get('p') ? parseInt(params.get('p')) : 1
-    });
-    this.updateApiUrl();
-    const { api_url } = this.state;
-    console.log('MovieList -> getData() ' + api_url);
-    // use async/await syntax
+      page: params.get('p') ? parseInt(params.get('p')) : 1,
+      limit: params.get('limit') ? parseInt(params.get('limit')) : 10
+    };
+    return params_obj;
+  };
+  // Get data from avgle api
+  getData = async () => {
+    console.log('MovieList -> getData()');
+    // this.setState({ fetchingMovieData: true });
+    const params_obj = this.parseParams();
+    const api_url = this.updateApiUrl(params_obj);
+    console.log('request to ' + api_url);
     try {
       const res = await axios.get(api_url);
       if (res.status === 200) {
-        // this.setState({ fetchingMovieData: false });
         console.log(res.data);
-        this.setState({
-          videos: res.data.response.videos,
-          total_videos: res.data.response.total_videos
-        });
+        return res.data;
       } else {
         console.error('Can not fetch data');
       }
     } catch (err) {
       console.error(err);
     }
-
-    this.setState({ fetchingMovieData: false });
   };
-
+  // Get data from firebase database
+  getSavedData = async () => {
+    console.log('MovieList -> getSavedData()');
+    let val;
+    await firebase
+      .database()
+      .ref('movies')
+      .once('value', snap => {
+        val = snap.val();
+      });
+    console.log('getSavedData() val=', val);
+    return val;
+  };
+  // Generate all remote data for the page
+  // call getData() and getSavedData() and update state with result
+  fetchData = async () => {
+    this.setState({ fetchingMovieData: true, fetchingSavedData: true });
+    const { order, time, page, limit } = this.parseParams();
+    const avgle_p = this.getData();
+    const user_p = this.getSavedData();
+    const [avgle_data, user_data] = await Promise.all([avgle_p, user_p]);
+    this.setState({
+      savedMoviesList: user_data,
+      saveButtonLoading: false,
+      saveButtonKey: -1,
+      fetchingSavedData: false,
+      videos: avgle_data.response.videos,
+      total_videos: avgle_data.response.total_videos,
+      fetchingMovieData: false,
+      order,
+      time,
+      page,
+      limit
+    });
+  };
+  // call fetchData() after first render
+  async componentDidMount() {
+    console.log('MovieList -> componentDidMount()');
+    this.fetchData();
+  }
+  // Update api endpoint according
+  updateApiUrl = params_obj => {
+    console.log('MovieList -> updateApiUrl()');
+    const { order, time, limit, page } = params_obj;
+    let api_url;
+    if (this.props.mode === 'VR') {
+      api_url = `https://api.avgle.com/v1/videos/${page -
+        1}?o=${order}&t=${time}&c=21&limit=${limit}`;
+    } else if (this.props.mode === 'SEARCH') {
+      const query = encodeURIComponent(this.props.match.params.search_query);
+      console.log({ query });
+      api_url = `https://api.avgle.com/v1/search/${query}/${page -
+        1}?o=${order}&t=${time}&limit=${limit}`;
+    } else if (this.props.mode === 'CH') {
+      const ch_string = encodeURIComponent('中文字幕');
+      api_url = `https://api.avgle.com/v1/search/${ch_string}/${page -
+        1}?o=${order}&t=${time}&limit=${limit}`;
+    } else if (this.props.mode === 'ALL') {
+      api_url = `https://api.avgle.com/v1/videos/${page -
+        1}?o=${order}&t=${time}&limit=${limit}`;
+    } else {
+      console.error('NO MODE is given to MovieList component');
+    }
+    return api_url;
+  };
+  // pagination onClick handler
   changePage = (event, data) => {
     console.log('MovieList -> changePage()');
     const { order, time } = this.state;
@@ -163,65 +132,58 @@ class MovieList extends React.Component {
     this.props.history.push({
       search: `?o=${order}&t=${time}&p=${data.activePage}`
     });
-    // await this.getData();
     window.scrollTo(0, 0);
   };
-
-  saveMovie = (video, key) => {
-    console.log('MovieList => saveMovie() => ');
+  // save movie handler
+  // video: video object
+  // key: save button sequence number
+  saveMovie = async (video, key) => {
+    console.log('MovieList => saveMovie() => ', video, key);
     console.log({ key });
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
-    const ref = firebase.database().ref('movies');
-    ref.push(video).then(() => {
+    try {
+      await firebase
+        .database()
+        .ref('movies')
+        .push(video);
       console.log('save movie successed');
-      this.getSavedData(false);
-    });
-    // axios
-    //   .post('/api/movies', {
-    //     video_data: { ...video, category: this.props.mode }
-    //   })
-    //   .then(res => {
-    //     console.log(res);
-    //     if (res.status === 201) {
-    //       console.log('save movie successed');
-    //       this.getSavedData(false);
-    //     } else {
-    //       console.log('save movie failed');
-    //     }
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   });
-  };
-
-  removeMovie = (saved_id, key) => {
-    console.log('MovieList => removeMovie()');
-    this.setState({ saveButtonLoading: true, saveButtonKey: key });
-    const ref = firebase.database().ref('movies/' + saved_id);
-    ref
-      .remove()
-      .then(() => {
-        console.log('Remove succeeded.');
-        this.getSavedData(false);
-      })
-      .catch(function(error) {
-        console.log('Remove failed: ' + error.message);
+      const new_data = await this.getSavedData();
+      this.setState({
+        savedMoviesList: new_data,
+        saveButtonLoading: false,
+        saveButtonKey: -1,
+        fetchingSavedData: false
       });
-
-    // axios.delete(`/api/movies/${saved_id}`).then(
-    //   res => {
-    //     console.log(res);
-    //     if (res.status === 200) {
-    //       console.log('delete movie successed' + saved_id);
-    //       this.getSavedData(false);
-    //     } else {
-    //       console.log('delete movie failed');
-    //     }
-    //   },
-    //   err => console.log(err)
-    // );
+    } catch (err) {
+      console.error(err);
+    }
   };
-
+  // remove movie handler
+  // saved_id: unique id in firebase database
+  // key: save button sequence number
+  removeMovie = async (saved_id, key) => {
+    console.log('MovieList => removeMovie()', saved_id, key);
+    this.setState({ saveButtonLoading: true, saveButtonKey: key });
+    try {
+      await firebase
+        .database()
+        .ref('movies/' + saved_id)
+        .remove()
+        .then(() => {
+          console.log('remove success');
+        });
+      const new_data = await this.getSavedData();
+      this.setState({
+        savedMoviesList: new_data,
+        saveButtonLoading: false,
+        saveButtonKey: -1,
+        fetchingSavedData: false
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  // save/remove multiplexer
   handleSaveButtonClick = (video, saved_id, key) => {
     if (saved_id) {
       this.removeMovie(saved_id, key);
@@ -229,31 +191,15 @@ class MovieList extends React.Component {
       this.saveMovie(video, key);
     }
   };
-
-  // checkSaveSuccess = () => {
-  //   console.log('MovieList -> checkSaveSuccess()');
-  //   axios.get('/api/movies').then(
-  //     async res => {
-  //       if (res.status === 200) {
-  //         console.log({ getSavedData: res.data });
-  //         await this.setState({ savedMoviesList: res.data.videos });
-  //         this.setState({ saveButtonLoading: false, saveButtonKey: -1 });
-  //       } else {
-  //         console.log('get saved movie failed');
-  //       }
-  //     },
-  //     err => {
-  //       console.error(err);
-  //     }
-  //   );
-  // };
-
-  // saveScrollPos = () => {
-  //   // console.log('MovieList -> saveScrollPos()');
-  //   this.setState({ scrollPos: document.scrollingElement.scrollTop });
-  // };
-
+  // perform side effect if browser url is changed
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.location !== this.props.location) {
+      this.fetchData();
+    }
+    console.log('componentDidUpdate()');
+  }
   render() {
+    console.log('MovieList render');
     const {
       videos,
       page,
