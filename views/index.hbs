@@ -102,13 +102,15 @@
           const res = await fetch(`https://api.avgle.com/v1/video/${movie_vid}`)
           const json = await res.json()
           video = json.response.video
-          console.log(video)
         } catch (err) {
           console.error(err)
         }
 
         const ref = firebase.database().ref('movies').push(video, () => {
+          console.log('save success ref=', ref.path.pieces_[1])
+          saved_id = ref.path.pieces_[1];
           btn.classList.add('red');
+          isSaved = !isSaved;
         });
       } else {
         firebase
@@ -118,6 +120,7 @@
           .then(() => {
             console.log('remove success');
             btn.classList.remove('red')
+            isSaved = !isSaved;
           })
           .catch(err => { console.error(err) });
       }
