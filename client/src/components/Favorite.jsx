@@ -64,8 +64,8 @@ export default class Favorite extends Component {
       .database()
       .ref('movies')
       .once('value', snap => {
-        console.log(snap.val());
-        console.log(snap.numChildren());
+        // console.log(snap.val());
+        // console.log(snap.numChildren());
         data = { val: snap.val(), count: snap.numChildren() };
       });
     return data;

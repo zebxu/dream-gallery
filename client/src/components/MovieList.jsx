@@ -50,7 +50,7 @@ class MovieList extends React.Component {
     try {
       const res = await axios.get(api_url);
       if (res.status === 200) {
-        console.log(res.data);
+        // console.log(res.data);
         return res.data;
       } else {
         console.error('Can not fetch data');
@@ -69,7 +69,7 @@ class MovieList extends React.Component {
       .once('value', snap => {
         val = snap.val();
       });
-    console.log('getSavedData() val=', val);
+    // console.log('getSavedData() val=', val);
     return val;
   };
   // Generate all remote data for the page
