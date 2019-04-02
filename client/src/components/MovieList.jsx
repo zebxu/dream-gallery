@@ -198,6 +198,12 @@ class MovieList extends React.Component {
     }
     console.log('componentDidUpdate()');
   }
+  componentWillUnmount() {
+    console.log('component will unmount');
+  }
+  renderPlaceholder = () => {
+    return [...Array(10)].map((index, key) => <CardPlaceholder key={key} />);
+  };
   render() {
     console.log('MovieList render');
     const {
@@ -216,12 +222,12 @@ class MovieList extends React.Component {
 
     return (
       <div>
-        {this.props.mode === 'SEARCH' ? (
+        {this.props.mode === 'SEARCH' && (
           <p>
             Search result of '
             <strong>{this.props.match.params.search_query}'</strong>
           </p>
-        ) : null}
+        )}
 
         <Grid columns={3} textAlign="left" stackable>
           <GridColumn textAlign="left" verticalAlign="bottom">
@@ -330,57 +336,55 @@ class MovieList extends React.Component {
           </GridColumn>
 
           <GridColumn textAlign="center">
-            {fetchingMovieData ? null : (
-              <MainPagination
-                activePage={page}
-                totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
-                changePage={this.changePage}
-              />
-            )}
+            <MainPagination
+              activePage={page}
+              totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
+              changePage={this.changePage}
+            />
           </GridColumn>
         </Grid>
 
-        {total_videos === 0 ? (
+        {total_videos === 0 && (
           <Message color="teal">
             <Message.Header>
               <Icon name="search" /> No video is found
             </Message.Header>
           </Message>
-        ) : null}
-
-        {fetchingMovieData || fetchingSavedData
-          ? [...Array(10)].map((index, key) => <CardPlaceholder key={key} />)
-          : videos.map((item, key) => {
-              let saved = false;
-              let saved_id = null;
-              Object.keys(savedMoviesList).forEach((key, index) => {
-                if (savedMoviesList[key].vid === item.vid) {
-                  saved = true;
-                  saved_id = key;
-                }
-              });
-              return (
-                <MovieCard
-                  video={item}
-                  key={key}
-                  data_key={key}
-                  saved={saved}
-                  saved_id={saved_id}
-                  handleClick={this.handleSaveButtonClick}
-                  scrollPos={scrollPos}
-                  lastPath={this.props.location}
-                  isLoading={key === saveButtonKey && saveButtonLoading}
-                />
-              );
-            })}
-
-        {fetchingMovieData ? null : (
-          <MainPagination
-            activePage={page}
-            totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
-            changePage={this.changePage}
-          />
         )}
+
+        {(fetchingMovieData || fetchingSavedData) &&
+          [...Array(10)].map((index, key) => <CardPlaceholder key={key} />)}
+        {!fetchingMovieData &&
+          !fetchingSavedData &&
+          videos.map((item, key) => {
+            let saved = false;
+            let saved_id = null;
+            Object.keys(savedMoviesList).forEach((key, index) => {
+              if (savedMoviesList[key].vid === item.vid) {
+                saved = true;
+                saved_id = key;
+              }
+            });
+            return (
+              <MovieCard
+                video={item}
+                key={key}
+                data_key={key}
+                saved={saved}
+                saved_id={saved_id}
+                handleClick={this.handleSaveButtonClick}
+                scrollPos={scrollPos}
+                lastPath={this.props.location}
+                isLoading={key === saveButtonKey && saveButtonLoading}
+              />
+            );
+          })}
+
+        <MainPagination
+          activePage={page}
+          totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
+          changePage={this.changePage}
+        />
       </div>
     );
   }
