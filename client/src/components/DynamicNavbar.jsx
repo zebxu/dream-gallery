@@ -3,7 +3,17 @@ import { Menu, Input, Icon, Form } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
 export default class MenuExampleInvertedSegment extends Component {
-  state = { visible: false, searchInputVisible: false, search_input: '' };
+  constructor(props) {
+    super(props);
+    const scrollPos = document.scrollingElement.scrollTop;
+    this.state = {
+      visible: false,
+      searchInputVisible: false,
+      search_input: '',
+      // incase the initial scroll pos is not at the top
+      scrollPos: scrollPos
+    };
+  }
 
   handleItemClick = (e, { name }) => {
     this.setState({ activeItem: name });
@@ -12,7 +22,9 @@ export default class MenuExampleInvertedSegment extends Component {
 
   showDynamicNavbar = () => {
     const scrollPos = document.scrollingElement.scrollTop;
-    this.setState({ scrollPos: scrollPos });
+    if (scrollPos < 300) {
+      this.setState({ scrollPos: scrollPos });
+    }
   };
 
   componentDidMount() {

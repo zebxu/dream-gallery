@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Icon, Image, Button } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
-import ReactPlayer from 'react-player';
 
 const MovieCard = ({
   video,
@@ -21,14 +20,16 @@ const MovieCard = ({
     />
 
     <a href={`/movie/${video.vid}`}>
-      <ReactPlayer
-        url={video.preview_video_url}
-        playing
-        loop
+      <video
+        src={video.preview_video_url}
         width="100%"
         height="100%"
-        playsinline
-      />
+        autoPlay
+        loop
+        playsInline
+      >
+        Your browser does not support the video tag.
+      </video>
     </a>
 
     <Card.Content textAlign="left">

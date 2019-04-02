@@ -368,7 +368,7 @@ class MovieList extends React.Component {
             return (
               <MovieCard
                 video={item}
-                key={key}
+                key={item.vid}
                 data_key={key}
                 saved={saved}
                 saved_id={saved_id}

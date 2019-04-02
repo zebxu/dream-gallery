@@ -57,6 +57,15 @@ class Navbar extends Component {
     this.setState({ search_input: value });
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) {
+      return true;
+    }
+    if (nextProps !== this.props) {
+      return false;
+    }
+  }
+
   render() {
     const {
       activeItem,
