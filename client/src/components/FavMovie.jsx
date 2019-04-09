@@ -41,7 +41,12 @@ export default class FavMovie extends Component {
           ) : null}
         </Item.Image>
         <Item.Content>
-          <Item.Header as="a" href={`/movie/${video.vid}`}>
+          <Item.Header
+            as="a"
+            href={`/movie/${video.vid}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {video.title}
           </Item.Header>
           <Item.Meta>{date.toLocaleDateString()}</Item.Meta>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Icon, Image, Button } from 'semantic-ui-react';
-import { NavLink, withRouter } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const MovieCard = ({
   video,
@@ -13,13 +13,15 @@ const MovieCard = ({
   <Card centered fluid>
     <Image
       as="a"
+      rel="noopener noreferrer"
       href={`/movie/${video.vid}`}
       src={video.preview_url}
       fluid
       centered
+      target="_blank"
     />
 
-    <a href={`/movie/${video.vid}`}>
+    <a href={`/movie/${video.vid}`} target="_blank" rel="noopener noreferrer">
       <video
         src={video.preview_video_url}
         width="100%"
@@ -35,8 +37,10 @@ const MovieCard = ({
     <Card.Content textAlign="left">
       <Card.Header
         as="a"
+        target="_blank"
         href={`/movie/${video.vid}`}
         style={{ color: '#000' }}
+        rel="noopener noreferrer"
       >
         {video.title}
       </Card.Header>
@@ -64,4 +68,4 @@ const MovieCard = ({
   </Card>
 );
 
-export default withRouter(MovieCard);
+export default MovieCard;

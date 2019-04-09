@@ -198,12 +198,6 @@ class MovieList extends React.Component {
     }
     console.log('componentDidUpdate()');
   }
-  componentWillUnmount() {
-    console.log('component will unmount');
-  }
-  renderPlaceholder = () => {
-    return [...Array(10)].map((index, key) => <CardPlaceholder key={key} />);
-  };
   render() {
     console.log('MovieList render');
     const {
