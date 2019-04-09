@@ -213,6 +213,11 @@ class MovieList extends React.Component {
       saveButtonLoading,
       saveButtonKey
     } = this.state;
+    let savedVidSet;
+    if (!fetchingMovieData && !fetchingSavedData) {
+      console.log('generate saved vid set', savedMoviesList);
+      savedVidSet = new Set(Object.values(savedMoviesList).map(i => i.vid));
+    }
 
     return (
       <div>
@@ -353,12 +358,10 @@ class MovieList extends React.Component {
           videos.map((item, key) => {
             let saved = false;
             let saved_id = null;
-            Object.keys(savedMoviesList).forEach((key, index) => {
-              if (savedMoviesList[key].vid === item.vid) {
-                saved = true;
-                saved_id = key;
-              }
-            });
+            if (savedVidSet.has(item.vid)) {
+              saved = true;
+              saved_id = key;
+            }
             return (
               <MovieCard
                 video={item}
