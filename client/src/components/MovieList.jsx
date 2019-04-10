@@ -7,6 +7,7 @@ import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import * as firebase from 'firebase';
+import qs from 'query-string';
 
 class MovieList extends React.Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class MovieList extends React.Component {
     this.state = {
       order: 'tr',
       time: 'a',
-      limit: 10,
+      limit: 250,
       page: 1,
       fetchingMovieData: true,
       fetchingSavedData: true,
@@ -36,7 +37,7 @@ class MovieList extends React.Component {
       order: params.get('o') ? params.get('o') : 'tr',
       time: params.get('t') ? params.get('t') : 'a',
       page: params.get('p') ? parseInt(params.get('p')) : 1,
-      limit: params.get('limit') ? parseInt(params.get('limit')) : 10
+      limit: params.get('limit') ? parseInt(params.get('limit')) : 250
     };
     return params_obj;
   };
@@ -105,20 +106,16 @@ class MovieList extends React.Component {
     const { order, time, limit, page } = params_obj;
     let api_url;
     if (this.props.mode === 'VR') {
-      api_url = `https://api.avgle.com/v1/videos/${page -
-        1}?o=${order}&t=${time}&c=21&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/videos/0?o=${order}&t=${time}&c=21&limit=${limit}`;
     } else if (this.props.mode === 'SEARCH') {
       const query = encodeURIComponent(this.props.match.params.search_query);
       console.log({ query });
-      api_url = `https://api.avgle.com/v1/search/${query}/${page -
-        1}?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/search/${query}/0?o=${order}&t=${time}&limit=${limit}`;
     } else if (this.props.mode === 'CH') {
       const ch_string = encodeURIComponent('中文字幕');
-      api_url = `https://api.avgle.com/v1/search/${ch_string}/${page -
-        1}?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/search/${ch_string}/0?o=${order}&t=${time}&limit=${limit}`;
     } else if (this.props.mode === 'ALL') {
-      api_url = `https://api.avgle.com/v1/videos/${page -
-        1}?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/videos/0?o=${order}&t=${time}&limit=${limit}`;
     } else {
       console.error('NO MODE is given to MovieList component');
     }
@@ -192,12 +189,47 @@ class MovieList extends React.Component {
     }
   };
   // perform side effect if browser url is changed
+  // prevent fetching data when only page is changed
+  // most data is cachedj
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.location !== this.props.location) {
-      this.fetchData();
+      if (
+        this.onlyPageChange(prevProps) &&
+        this.props.mode === prevProps.mode
+      ) {
+        console.log('%c only page change', 'background: pink');
+        return;
+      } else {
+        this.fetchData();
+      }
     }
     console.log('componentDidUpdate()');
   }
+  // identify the event that only page is changed so no need to fetch data
+  onlyPageChange = prevProps => {
+    console.log(prevProps);
+    const now_params = qs.parse(this.props.location.search);
+    const before_params = qs.parse(prevProps.location.search);
+    console.log(Object.values(now_params), Object.values(before_params));
+    // when go from a landing page to a sub page and the o t params remain as default, this also satisfy the condition
+    if (
+      Object.keys(before_params).length === 0 &&
+      Object.keys(now_params).length !== 0 &&
+      now_params['o'] === 'tr' &&
+      now_params['t'] === 'a'
+    ) {
+      return true;
+    }
+    // compare the changing of URL search params
+    for (let i in now_params) {
+      if (before_params[i]) {
+        if (before_params[i] !== now_params[i] && i !== 'p') {
+          return false;
+        }
+      }
+      return true;
+    }
+  };
   render() {
     console.log('MovieList render');
     const {
@@ -213,9 +245,14 @@ class MovieList extends React.Component {
       saveButtonLoading,
       saveButtonKey
     } = this.state;
-    let savedVidSet;
+    let savedVidSet, renderedVideos;
+    // calculate movie list range for this page
     if (!fetchingMovieData && !fetchingSavedData) {
-      console.log('generate saved vid set', savedMoviesList);
+      renderedVideos = videos.slice(10 * (page - 1), 10 * (page - 1) + 10);
+      console.log(10 * (page - 1), 10 * (page - 1) + 10);
+    }
+    // generate saved vid set
+    if (!fetchingMovieData && !fetchingSavedData) {
       savedVidSet = new Set(Object.values(savedMoviesList).map(i => i.vid));
     }
 
@@ -355,7 +392,7 @@ class MovieList extends React.Component {
           [...Array(10)].map((index, key) => <CardPlaceholder key={key} />)}
         {!fetchingMovieData &&
           !fetchingSavedData &&
-          videos.map((item, key) => {
+          renderedVideos.map((item, key) => {
             let saved = false;
             let saved_id = null;
             if (savedVidSet.has(item.vid)) {
