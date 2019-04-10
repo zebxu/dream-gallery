@@ -12,7 +12,7 @@ import qs from 'query-string';
 class MovieList extends React.Component {
   constructor(props) {
     super(props);
-    console.log('MovieList -> constructor');
+    // console.log('MovieList -> constructor');
     this.state = {
       order: 'tr',
       time: 'a',
@@ -21,7 +21,9 @@ class MovieList extends React.Component {
       fetchingMovieData: true,
       fetchingSavedData: true,
       saveButtonLoading: false,
-      saveButtonKey: -1
+      saveButtonKey: -1,
+      fetchIteration: 0,
+      videos: []
     };
   }
   static propTypes = {
@@ -43,11 +45,11 @@ class MovieList extends React.Component {
   };
   // Get data from avgle api
   getData = async () => {
-    console.log('MovieList -> getData()');
+    // console.log('MovieList -> getData()');
     // this.setState({ fetchingMovieData: true });
     const params_obj = this.parseParams();
     const api_url = this.updateApiUrl(params_obj);
-    console.log('request to ' + api_url);
+    // console.log('request to ' + api_url);
     try {
       const res = await axios.get(api_url);
       if (res.status === 200) {
@@ -62,7 +64,7 @@ class MovieList extends React.Component {
   };
   // Get data from firebase database
   getSavedData = async () => {
-    console.log('MovieList -> getSavedData()');
+    // console.log('MovieList -> getSavedData()');
     let val;
     await firebase
       .database()
@@ -75,8 +77,13 @@ class MovieList extends React.Component {
   };
   // Generate all remote data for the page
   // call getData() and getSavedData() and update state with result
-  fetchData = async () => {
-    this.setState({ fetchingMovieData: true, fetchingSavedData: true });
+  fetchData = async (new_iteration = true) => {
+    await this.setState({
+      fetchingMovieData: true,
+      fetchingSavedData: true,
+      fetchIteration: new_iteration ? 0 : this.state.fetchIteration,
+      videos: new_iteration ? [] : this.state.videos
+    });
     const { order, time, page, limit } = this.parseParams();
     const avgle_p = this.getData();
     const user_p = this.getSavedData();
@@ -86,9 +93,10 @@ class MovieList extends React.Component {
       saveButtonLoading: false,
       saveButtonKey: -1,
       fetchingSavedData: false,
-      videos: avgle_data.response.videos,
+      videos: this.state.videos.concat(avgle_data.response.videos),
       total_videos: avgle_data.response.total_videos,
       fetchingMovieData: false,
+      fetchIteration: this.state.fetchIteration + 1,
       order,
       time,
       page,
@@ -97,25 +105,25 @@ class MovieList extends React.Component {
   };
   // call fetchData() after first render
   async componentDidMount() {
-    console.log('MovieList -> componentDidMount()');
+    // console.log('MovieList -> componentDidMount()');
     this.fetchData();
   }
   // Update api endpoint according
   updateApiUrl = params_obj => {
-    console.log('MovieList -> updateApiUrl()');
-    const { order, time, limit, page } = params_obj;
+    const { fetchIteration } = this.state;
+    const { order, time, limit } = params_obj;
+    // console.log('MovieList -> updateApiUrl() fetchIteration=', fetchIteration);
     let api_url;
     if (this.props.mode === 'VR') {
-      api_url = `https://api.avgle.com/v1/videos/0?o=${order}&t=${time}&c=21&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/videos/${fetchIteration}?o=${order}&t=${time}&c=21&limit=${limit}`;
     } else if (this.props.mode === 'SEARCH') {
       const query = encodeURIComponent(this.props.match.params.search_query);
-      console.log({ query });
-      api_url = `https://api.avgle.com/v1/search/${query}/0?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/search/${query}/${fetchIteration}?o=${order}&t=${time}&limit=${limit}`;
     } else if (this.props.mode === 'CH') {
       const ch_string = encodeURIComponent('中文字幕');
-      api_url = `https://api.avgle.com/v1/search/${ch_string}/0?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/search/${ch_string}/${fetchIteration}?o=${order}&t=${time}&limit=${limit}`;
     } else if (this.props.mode === 'ALL') {
-      api_url = `https://api.avgle.com/v1/videos/0?o=${order}&t=${time}&limit=${limit}`;
+      api_url = `https://api.avgle.com/v1/videos/${fetchIteration}?o=${order}&t=${time}&limit=${limit}`;
     } else {
       console.error('NO MODE is given to MovieList component');
     }
@@ -123,7 +131,7 @@ class MovieList extends React.Component {
   };
   // pagination onClick handler
   changePage = (event, data) => {
-    console.log('MovieList -> changePage()');
+    // console.log('MovieList -> changePage()');
     const { order, time } = this.state;
     this.setState({ page: data.activePage });
     this.props.history.push({
@@ -135,15 +143,14 @@ class MovieList extends React.Component {
   // video: video object
   // key: save button sequence number
   saveMovie = async (video, key) => {
-    console.log('MovieList => saveMovie() => ', video, key);
-    console.log({ key });
+    // console.log('MovieList => saveMovie() => ', video, key);
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
     try {
       await firebase
         .database()
         .ref('movies')
         .push(video);
-      console.log('save movie successed');
+      // console.log('save movie successed');
       const new_data = await this.getSavedData();
       this.setState({
         savedMoviesList: new_data,
@@ -159,7 +166,7 @@ class MovieList extends React.Component {
   // saved_id: unique id in firebase database
   // key: save button sequence number
   removeMovie = async (saved_id, key) => {
-    console.log('MovieList => removeMovie()', saved_id, key);
+    // console.log('MovieList => removeMovie()', saved_id, key);
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
     try {
       await firebase
@@ -167,7 +174,7 @@ class MovieList extends React.Component {
         .ref('movies/' + saved_id)
         .remove()
         .then(() => {
-          console.log('remove success');
+          // console.log('remove success');
         });
       const new_data = await this.getSavedData();
       this.setState({
@@ -197,20 +204,25 @@ class MovieList extends React.Component {
         this.onlyPageChange(prevProps) &&
         this.props.mode === prevProps.mode
       ) {
-        console.log('%c only page change', 'background: pink');
+        // console.log('%c only page change', 'background: pink');
+        if (this.exceedCache()) {
+          // console.log('%c fetch more', 'color: red');
+          // parameter new_iteration = false
+          this.fetchData(false);
+        }
         return;
       } else {
+        // console.log('%c re-fetch', 'color: red');
         this.fetchData();
       }
     }
-    console.log('componentDidUpdate()');
+    // console.log('componentDidUpdate()');
   }
   // identify the event that only page is changed so no need to fetch data
   onlyPageChange = prevProps => {
-    console.log(prevProps);
     const now_params = qs.parse(this.props.location.search);
     const before_params = qs.parse(prevProps.location.search);
-    console.log(Object.values(now_params), Object.values(before_params));
+
     // when go from a landing page to a sub page and the o t params remain as default, this also satisfy the condition
     if (
       Object.keys(before_params).length === 0 &&
@@ -226,12 +238,28 @@ class MovieList extends React.Component {
         if (before_params[i] !== now_params[i] && i !== 'p') {
           return false;
         }
+      } else {
+        return false;
       }
-      return true;
+    }
+    return true;
+  };
+  // check if a fetch more is needed
+  exceedCache = () => {
+    const { videos, page, fetchingMovieData, fetchingSavedData } = this.state;
+    if (!fetchingMovieData && !fetchingSavedData) {
+      // console.log('video length:', videos.length, 'page:', page);
+      if (10 * (page - 1) + 9 > videos.length) {
+        // fetch more
+        // console.log('%c fetch more', 'color: red');
+        return true;
+      } else {
+        return false;
+      }
     }
   };
   render() {
-    console.log('MovieList render');
+    // console.log('MovieList render');
     const {
       videos,
       page,
@@ -249,7 +277,11 @@ class MovieList extends React.Component {
     // calculate movie list range for this page
     if (!fetchingMovieData && !fetchingSavedData) {
       renderedVideos = videos.slice(10 * (page - 1), 10 * (page - 1) + 10);
-      console.log(10 * (page - 1), 10 * (page - 1) + 10);
+      // console.log(
+      //   'rendering video range: ',
+      //   10 * (page - 1),
+      //   10 * (page - 1) + 10
+      // );
     }
     // generate saved vid set
     if (!fetchingMovieData && !fetchingSavedData) {
