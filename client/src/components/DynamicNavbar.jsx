@@ -7,7 +7,7 @@ export default class DynamicNavbar extends Component {
     super(props);
     const scrollPos = document.scrollingElement.scrollTop;
     let initPos = 0;
-    if (scrollPos < 300) {
+    if (scrollPos > 90) {
       initPos = 500;
     }
     this.state = {
@@ -18,7 +18,6 @@ export default class DynamicNavbar extends Component {
       scrollPos: initPos
     };
   }
-  //
   handleItemClick = (e, { name }) => {
     this.setState({ activeItem: name });
     window.scrollTo(0, 0);
