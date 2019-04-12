@@ -2,19 +2,23 @@ import React, { Component } from 'react';
 import { Menu, Input, Icon, Form } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 
-export default class MenuExampleInvertedSegment extends Component {
+export default class DynamicNavbar extends Component {
   constructor(props) {
     super(props);
     const scrollPos = document.scrollingElement.scrollTop;
+    let initPos = 0;
+    if (scrollPos < 300) {
+      initPos = 500;
+    }
     this.state = {
       visible: false,
       searchInputVisible: false,
       search_input: '',
       // incase the initial scroll pos is not at the top
-      scrollPos: scrollPos
+      scrollPos: initPos
     };
   }
-
+  //
   handleItemClick = (e, { name }) => {
     this.setState({ activeItem: name });
     window.scrollTo(0, 0);

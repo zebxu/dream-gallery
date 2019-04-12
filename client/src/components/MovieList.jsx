@@ -73,8 +73,17 @@ class MovieList extends React.Component {
         val = snap.val();
       });
     // console.log('getSavedData() val=', val);
-    return val;
+    const vid_set = new Set(Object.values(val).map(i => i.vid));
+    const save_id_map = new Map();
+    for (let i of Object.entries(val)) {
+      save_id_map.set(i[1].vid, i[0]);
+      vid_set.add(i.vid);
+    }
+    // console.log('map', save_id_map);
+    // console.log('set', vid_set);
+    return { vid_set, save_id_map };
   };
+  // Parent function of all fetch functions
   // Generate all remote data for the page
   // call getData() and getSavedData() and update state with result
   fetchData = async (new_iteration = true) => {
@@ -88,8 +97,10 @@ class MovieList extends React.Component {
     const avgle_p = this.getData();
     const user_p = this.getSavedData();
     const [avgle_data, user_data] = await Promise.all([avgle_p, user_p]);
+    const { vid_set, save_id_map } = user_data;
     this.setState({
-      savedMoviesList: user_data,
+      savedMoviesSet: vid_set,
+      savedMoviesMap: save_id_map,
       saveButtonLoading: false,
       saveButtonKey: -1,
       fetchingSavedData: false,
@@ -152,8 +163,10 @@ class MovieList extends React.Component {
         .push(video);
       // console.log('save movie successed');
       const new_data = await this.getSavedData();
+      const { vid_set, save_id_map } = new_data;
       this.setState({
-        savedMoviesList: new_data,
+        savedMoviesSet: vid_set,
+        savedMoviesMap: save_id_map,
         saveButtonLoading: false,
         saveButtonKey: -1,
         fetchingSavedData: false
@@ -166,7 +179,7 @@ class MovieList extends React.Component {
   // saved_id: unique id in firebase database
   // key: save button sequence number
   removeMovie = async (saved_id, key) => {
-    // console.log('MovieList => removeMovie()', saved_id, key);
+    console.log('MovieList => removeMovie()', saved_id, key);
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
     try {
       await firebase
@@ -174,11 +187,13 @@ class MovieList extends React.Component {
         .ref('movies/' + saved_id)
         .remove()
         .then(() => {
-          // console.log('remove success');
+          console.log('remove success');
         });
       const new_data = await this.getSavedData();
+      const { vid_set, save_id_map } = new_data;
       this.setState({
-        savedMoviesList: new_data,
+        savedMoviesSet: vid_set,
+        savedMoviesMap: save_id_map,
         saveButtonLoading: false,
         saveButtonKey: -1,
         fetchingSavedData: false
@@ -197,7 +212,7 @@ class MovieList extends React.Component {
   };
   // perform side effect if browser url is changed
   // prevent fetching data when only page is changed
-  // most data is cachedj
+  // most data is cached
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.location !== this.props.location) {
       if (
@@ -219,9 +234,20 @@ class MovieList extends React.Component {
     // console.log('componentDidUpdate()');
   }
   // identify the event that only page is changed so no need to fetch data
+  // return false if a re fetch is needed
   onlyPageChange = prevProps => {
     const now_params = qs.parse(this.props.location.search);
     const before_params = qs.parse(prevProps.location.search);
+
+    // when doing search during a search result page
+    // a re fetch is required
+    if (
+      this.props.mode === 'SEARCH' &&
+      this.props.match.params.search_query !==
+        prevProps.match.params.search_query
+    ) {
+      return false;
+    }
 
     // when go from a landing page to a sub page and the o t params remain as default, this also satisfy the condition
     if (
@@ -266,14 +292,15 @@ class MovieList extends React.Component {
       total_videos,
       order,
       time,
-      savedMoviesList,
+      savedMoviesSet,
+      savedMoviesMap,
       scrollPos,
       fetchingMovieData,
       fetchingSavedData,
       saveButtonLoading,
       saveButtonKey
     } = this.state;
-    let savedVidSet, renderedVideos;
+    let renderedVideos;
     // calculate movie list range for this page
     if (!fetchingMovieData && !fetchingSavedData) {
       renderedVideos = videos.slice(10 * (page - 1), 10 * (page - 1) + 10);
@@ -283,11 +310,6 @@ class MovieList extends React.Component {
       //   10 * (page - 1) + 10
       // );
     }
-    // generate saved vid set
-    if (!fetchingMovieData && !fetchingSavedData) {
-      savedVidSet = new Set(Object.values(savedMoviesList).map(i => i.vid));
-    }
-
     return (
       <div>
         {this.props.mode === 'SEARCH' && (
@@ -427,9 +449,9 @@ class MovieList extends React.Component {
           renderedVideos.map((item, key) => {
             let saved = false;
             let saved_id = null;
-            if (savedVidSet.has(item.vid)) {
+            if (savedMoviesSet.has(item.vid)) {
               saved = true;
-              saved_id = key;
+              saved_id = savedMoviesMap.get(item.vid);
             }
             return (
               <MovieCard
