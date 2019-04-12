@@ -5,17 +5,12 @@ import { NavLink } from 'react-router-dom';
 export default class DynamicNavbar extends Component {
   constructor(props) {
     super(props);
-    const scrollPos = document.scrollingElement.scrollTop;
-    let initPos = 0;
-    if (scrollPos > 90) {
-      initPos = 500;
-    }
     this.state = {
       visible: false,
       searchInputVisible: false,
       search_input: '',
       // incase the initial scroll pos is not at the top
-      scrollPos: initPos
+      scrollPos: 0
     };
   }
   handleItemClick = (e, { name }) => {
@@ -32,6 +27,8 @@ export default class DynamicNavbar extends Component {
 
   componentDidMount() {
     window.addEventListener('scroll', this.showDynamicNavbar);
+    const scrollPos = document.scrollingElement.scrollTop;
+    this.setState({ scrollPos: scrollPos });
   }
 
   componentWillUnmount() {

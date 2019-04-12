@@ -24,7 +24,7 @@ class Navbar extends Component {
     console.log('handleItemClick()');
     this.setState({ activeItem: name });
     this.hideSidebar();
-    window.scroll(0, 0);
+    // window.scroll(0, 0);
   };
   showSidebar = () => this.setState({ visible: true });
   hideSidebar = () => this.setState({ visible: false });
@@ -49,7 +49,7 @@ class Navbar extends Component {
       this.hideSearch();
       this.setState({ search_input: '' });
       document.activeElement.blur();
-      window.scroll(0, 0);
+      // window.scroll(0, 0);
     }
   };
 

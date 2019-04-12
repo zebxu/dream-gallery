@@ -228,6 +228,7 @@ class MovieList extends React.Component {
         return;
       } else {
         // console.log('%c re-fetch', 'color: red');
+        window.scrollTo(0, 0);
         this.fetchData();
       }
     }
