@@ -426,11 +426,13 @@ class MovieList extends React.Component {
           </GridColumn>
 
           <GridColumn textAlign="center">
-            <MainPagination
-              activePage={page}
-              totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
-              changePage={this.changePage}
-            />
+            {!fetchingMovieData && !fetchingSavedData && (
+              <MainPagination
+                activePage={page}
+                totalPages={total_videos ? Math.ceil(total_videos / 10) : 1}
+                changePage={this.changePage}
+              />
+            )}
           </GridColumn>
         </Grid>
 
