@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Item, Button, Responsive } from 'semantic-ui-react';
+import { Item, Button, Responsive, Image } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 
@@ -23,12 +23,10 @@ export default class FavMovie extends Component {
         <Responsive minWidth={768} as={Item}>
           <Item.Image
             size="large"
-            src={video.preview_url}
-            onMouseEnter={() => {
-              this.setState({ previewControl: true });
-            }}
             onMouseOut={() => {
-              this.setState({ previewControl: false });
+              console.log('mouse out');
+              const { previewControl } = this.state;
+              this.setState({ previewControl: !previewControl });
             }}
           >
             {previewControl ? (
@@ -40,7 +38,16 @@ export default class FavMovie extends Component {
                 height="100%"
                 playsinline
               />
-            ) : null}
+            ) : (
+              <Image
+                size="large"
+                src={video.preview_url}
+                onMouseEnter={() => {
+                  console.log('mouse enter');
+                  this.setState({ previewControl: true });
+                }}
+              />
+            )}
           </Item.Image>
           <Item.Content>
             <Item.Header
