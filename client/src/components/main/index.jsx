@@ -1,6 +1,6 @@
-import Navbar from './Navbar';
+import Navbar from '../common/Navbar';
 import React from 'react';
-import Footer from './Footer';
+import Footer from '../common/Footer';
 import MovieList from './MovieList';
 import { Container, Divider } from 'semantic-ui-react';
 

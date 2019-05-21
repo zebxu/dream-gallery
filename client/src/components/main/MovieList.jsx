@@ -1,7 +1,7 @@
 import React from 'react';
 import MovieCard from './MovieCard';
-import MainPagination from './MainPagination';
-import CardPlaceholder from './CardPlaceholder';
+import MainPagination from '../common/MainPagination';
+import CardPlaceholder from '../common/CardPlaceholder';
 import { Dropdown, Grid, GridColumn, Icon, Message } from 'semantic-ui-react';
 import { NavLink, withRouter } from 'react-router-dom';
 import axios from 'axios';
@@ -12,7 +12,7 @@ import qs from 'query-string';
 class MovieList extends React.Component {
   constructor(props) {
     super(props);
-    // console.log('MovieList -> constructor');
+
     this.state = {
       order: 'tr',
       time: 'a',
@@ -45,15 +45,13 @@ class MovieList extends React.Component {
   };
   // Get data from avgle api
   getData = async () => {
-    // console.log('MovieList -> getData()');
     // this.setState({ fetchingMovieData: true });
     const params_obj = this.parseParams();
     const api_url = this.updateApiUrl(params_obj);
-    // console.log('request to ' + api_url);
+
     try {
       const res = await axios.get(api_url);
       if (res.status === 200) {
-        // console.log(res.data);
         return res.data;
       } else {
         console.error('Can not fetch data');
@@ -64,7 +62,6 @@ class MovieList extends React.Component {
   };
   // Get data from firebase database
   getSavedData = async () => {
-    // console.log('MovieList -> getSavedData()');
     let val;
     await firebase
       .database()
@@ -72,15 +69,14 @@ class MovieList extends React.Component {
       .once('value', snap => {
         val = snap.val();
       });
-    // console.log('getSavedData() val=', val);
+
     const vid_set = new Set(Object.values(val).map(i => i.vid));
     const save_id_map = new Map();
     for (let i of Object.entries(val)) {
       save_id_map.set(i[1].vid, i[0]);
       vid_set.add(i.vid);
     }
-    // console.log('map', save_id_map);
-    // console.log('set', vid_set);
+
     return { vid_set, save_id_map };
   };
   // Parent function of all fetch functions
@@ -116,14 +112,13 @@ class MovieList extends React.Component {
   };
   // call fetchData() after first render
   async componentDidMount() {
-    // console.log('MovieList -> componentDidMount()');
     this.fetchData();
   }
   // Update api endpoint according
   updateApiUrl = params_obj => {
     const { fetchIteration } = this.state;
     const { order, time, limit } = params_obj;
-    // console.log('MovieList -> updateApiUrl() fetchIteration=', fetchIteration);
+
     let api_url;
     if (this.props.mode === 'VR') {
       api_url = `https://api.avgle.com/v1/videos/${fetchIteration}?o=${order}&t=${time}&c=21&limit=${limit}`;
@@ -142,7 +137,6 @@ class MovieList extends React.Component {
   };
   // pagination onClick handler
   changePage = (event, data) => {
-    // console.log('MovieList -> changePage()');
     const { order, time } = this.state;
     this.setState({ page: data.activePage });
     this.props.history.push({
@@ -154,14 +148,13 @@ class MovieList extends React.Component {
   // video: video object
   // key: save button sequence number
   saveMovie = async (video, key) => {
-    // console.log('MovieList => saveMovie() => ', video, key);
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
     try {
       await firebase
         .database()
         .ref('movies')
         .push(video);
-      // console.log('save movie successed');
+
       const new_data = await this.getSavedData();
       const { vid_set, save_id_map } = new_data;
       this.setState({
@@ -179,16 +172,13 @@ class MovieList extends React.Component {
   // saved_id: unique id in firebase database
   // key: save button sequence number
   removeMovie = async (saved_id, key) => {
-    console.log('MovieList => removeMovie()', saved_id, key);
     this.setState({ saveButtonLoading: true, saveButtonKey: key });
     try {
       await firebase
         .database()
         .ref('movies/' + saved_id)
         .remove()
-        .then(() => {
-          console.log('remove success');
-        });
+        .then(() => {});
       const new_data = await this.getSavedData();
       const { vid_set, save_id_map } = new_data;
       this.setState({
@@ -219,20 +209,16 @@ class MovieList extends React.Component {
         this.onlyPageChange(prevProps) &&
         this.props.mode === prevProps.mode
       ) {
-        // console.log('%c only page change', 'background: pink');
         if (this.exceedCache()) {
-          // console.log('%c fetch more', 'color: red');
           // parameter new_iteration = false
           this.fetchData(false);
         }
         return;
       } else {
-        // console.log('%c re-fetch', 'color: red');
         window.scrollTo(0, 0);
         this.fetchData();
       }
     }
-    // console.log('componentDidUpdate()');
   }
   // identify the event that only page is changed so no need to fetch data
   // return false if a re fetch is needed
@@ -275,10 +261,9 @@ class MovieList extends React.Component {
   exceedCache = () => {
     const { videos, page, fetchingMovieData, fetchingSavedData } = this.state;
     if (!fetchingMovieData && !fetchingSavedData) {
-      // console.log('video length:', videos.length, 'page:', page);
       if (10 * (page - 1) + 9 > videos.length) {
         // fetch more
-        // console.log('%c fetch more', 'color: red');
+
         return true;
       } else {
         return false;
@@ -286,7 +271,6 @@ class MovieList extends React.Component {
     }
   };
   render() {
-    // console.log('MovieList render');
     const {
       videos,
       page,
@@ -305,7 +289,7 @@ class MovieList extends React.Component {
     // calculate movie list range for this page
     if (!fetchingMovieData && !fetchingSavedData) {
       renderedVideos = videos.slice(10 * (page - 1), 10 * (page - 1) + 10);
-      // console.log(
+
       //   'rendering video range: ',
       //   10 * (page - 1),
       //   10 * (page - 1) + 10

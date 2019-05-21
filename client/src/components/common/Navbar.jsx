@@ -21,7 +21,6 @@ class Navbar extends Component {
   };
 
   handleItemClick = (e, { name }) => {
-    console.log('handleItemClick()');
     this.setState({ activeItem: name });
     this.hideSidebar();
     // window.scroll(0, 0);
@@ -40,9 +39,9 @@ class Navbar extends Component {
   };
 
   toSearchPage = e => {
-    console.log('Navbar => toSearchPage()');
     const { search_input } = this.state;
     if (search_input !== '') {
+      window.scrollTo(0, 0);
       this.props.history.push({
         pathname: `/search/${search_input}`
       });

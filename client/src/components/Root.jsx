@@ -1,7 +1,7 @@
-import Landing from './Landing';
+import Landing from './main';
 import { Route, Switch } from 'react-router-dom';
 import React from 'react';
-import Favorite from './Favorite';
+import Favorite from './favorite';
 import NotFound from './NotFound';
 
 const Root = () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './Navbar';
+import Navbar from './common/Navbar';
 import { Container } from 'semantic-ui-react';
 
 export default function NotFound() {

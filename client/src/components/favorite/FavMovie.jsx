@@ -24,7 +24,6 @@ export default class FavMovie extends Component {
           <Item.Image
             size="large"
             onMouseOut={() => {
-              console.log('mouse out');
               const { previewControl } = this.state;
               this.setState({ previewControl: !previewControl });
             }}
@@ -43,7 +42,6 @@ export default class FavMovie extends Component {
                 size="large"
                 src={video.preview_url}
                 onMouseEnter={() => {
-                  console.log('mouse enter');
                   this.setState({ previewControl: true });
                 }}
               />

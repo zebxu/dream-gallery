@@ -9,8 +9,8 @@ import {
 } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import FavMovie from './FavMovie';
-import Navbar from './Navbar';
-import MainPagination from './MainPagination';
+import Navbar from '../common/Navbar';
+import MainPagination from '../common/MainPagination';
 import * as firebase from 'firebase';
 
 export default class Favorite extends Component {
@@ -53,19 +53,15 @@ export default class Favorite extends Component {
       .database()
       .ref('movies/' + saved_id)
       .remove();
-    console.log('Remove succeeded.');
     this.fetchData();
   };
 
   getData = async () => {
-    console.log('Favorite -> getData() ');
     let data = {};
     await firebase
       .database()
       .ref('movies')
       .once('value', snap => {
-        // console.log(snap.val());
-        // console.log(snap.numChildren());
         data = { val: snap.val(), count: snap.numChildren() };
       });
     return data;
@@ -80,7 +76,6 @@ export default class Favorite extends Component {
   };
 
   render() {
-    console.log('render()');
     const {
       videos,
       total_videos,

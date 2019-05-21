@@ -14,8 +14,8 @@ export default class DynamicNavbar extends Component {
     };
   }
   handleItemClick = (e, { name }) => {
-    this.setState({ activeItem: name });
     window.scrollTo(0, 0);
+    this.setState({ activeItem: name });
   };
 
   showDynamicNavbar = () => {
@@ -32,7 +32,6 @@ export default class DynamicNavbar extends Component {
   }
 
   componentWillUnmount() {
-    console.log('DynamicNavbar -> componentWillUnmount()');
     window.removeEventListener('scroll', this.showDynamicNavbar);
   }
 
