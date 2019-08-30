@@ -9,7 +9,6 @@ import {
 } from 'semantic-ui-react';
 import { NavLink } from 'react-router-dom';
 import FavMovie from './FavMovie';
-import Navbar from '../common/Navbar';
 import MainPagination from '../common/MainPagination';
 import * as firebase from 'firebase';
 
@@ -87,7 +86,6 @@ export default class Favorite extends Component {
     } = this.state;
     return (
       <>
-        <Navbar />
         <Container>
           <Grid>
             <Grid.Column textAlign="center">
@@ -149,25 +147,25 @@ export default class Favorite extends Component {
                   <br />
                 </>
               ) : (
-                Object.keys(videos)
-                  .reverse()
-                  .map((key, index) => {
-                    if (Math.floor(index / 10) === page - 1) {
-                      return (
-                        <FavMovie
-                          video={videos[key]}
-                          key={key}
-                          remove_id={key}
-                          removing={
-                            videos[key].vid === removingKey && isRemoving
-                          }
-                          removeFunc={this.removeMovie}
-                        />
-                      );
-                    }
-                    return null;
-                  })
-              )}
+                  Object.keys(videos)
+                    .reverse()
+                    .map((key, index) => {
+                      if (Math.floor(index / 10) === page - 1) {
+                        return (
+                          <FavMovie
+                            video={videos[key]}
+                            key={key}
+                            remove_id={key}
+                            removing={
+                              videos[key].vid === removingKey && isRemoving
+                            }
+                            removeFunc={this.removeMovie}
+                          />
+                        );
+                      }
+                      return null;
+                    })
+                )}
             </Item.Group>
           </Segment>
           <Grid>

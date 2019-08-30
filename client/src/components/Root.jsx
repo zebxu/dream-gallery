@@ -3,10 +3,12 @@ import { Route, Switch } from 'react-router-dom';
 import React from 'react';
 import Favorite from './favorite';
 import NotFound from './NotFound';
+import Navbar from './common/Navbar';
 
 const Root = () => {
   return (
     <React.Fragment>
+      <Navbar />
       <Switch>
         <Route
           exact
